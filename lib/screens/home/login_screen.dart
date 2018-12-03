@@ -65,7 +65,7 @@ class LoginScreenState extends State<LoginScreen>
     var loginForm = new Column(
       children: <Widget>[
         new Text(
-          "Login App",
+          "SATRAPÍA",
           textScaleFactor: 2.0,
         ),
         new Form(
@@ -81,14 +81,14 @@ class LoginScreenState extends State<LoginScreen>
                         ? "Username must have atleast 10 chars"
                         : null;
                   },
-                  decoration: new InputDecoration(labelText: "Username"),
+                  decoration: new InputDecoration(labelText: "Usuario"),
                 ),
               ),
               new Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: new TextFormField(
                   onSaved: (val) => _password = val,
-                  decoration: new InputDecoration(labelText: "Password"),
+                  decoration: new InputDecoration(labelText: "Contraseña"),
                 ),
               ),
             ],
@@ -105,7 +105,7 @@ class LoginScreenState extends State<LoginScreen>
       body: new Container(
         decoration: new BoxDecoration(
           image: new DecorationImage(
-              image: new AssetImage("assets/login_background.jpg"),
+              image: new AssetImage("imagenes/fondo_login.jpg"),
               fit: BoxFit.cover),
         ),
         child: new Center(
