@@ -11,8 +11,11 @@ import '../clases/juego/CentroDeInvestigacion.clase.dart';
 import 'models.dart';
 
 class Principal {
-  Principal(ModeloPrincipal myModelo) {
-    API.generaImperio(0, myModelo);
+  static ModeloPrincipal _modelo;
+
+  Principal() {
+    _modelo = ModeloPrincipal();
+    API.generaImperio(0, _modelo);
 
     Punto posicion = new Punto(105,103,0);
     API.creaGranja(posicion);
@@ -37,5 +40,8 @@ class Principal {
     posicion = new Punto(110,108,0);
     API.creaMinaDeHierro(posicion);
     //API.destruyeMinaDeHierro(1);
+
   }
+
+  static ModeloPrincipal getModelo() => _modelo;
 }

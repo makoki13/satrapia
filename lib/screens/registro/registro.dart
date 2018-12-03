@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AfterSplash extends StatelessWidget {
+class Registro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Welcome In SplashScreen Package"),
+        title: new Text("Pantalla de registro"),
         automaticallyImplyLeading: false,
       ),
       body: new Center(

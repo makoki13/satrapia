@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
 
-import 'home_page_body.dart';
+import '../partida/partida.dart';
+
+import 'login.dart';
 
 class HomeInicio extends StatefulWidget {
   @override
@@ -9,11 +11,20 @@ class HomeInicio extends StatefulWidget {
 }
 
 class _MyAppState extends State<HomeInicio> {
+
+  bool _usuarioRegistrado = false;
+  Widget _siguienteWidget;
+
+  _MyAppState() {
+    if (_usuarioRegistrado == true) _siguienteWidget = PartidaApp(); else _siguienteWidget = Login();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new SplashScreen(
       seconds: 3,
-      navigateAfterSeconds: new AfterSplash(),
+      navigateAfterSeconds: _siguienteWidget,
+      //navigateAfterSeconds: PartidaApp(),
       title: new Text('xšaθrapā',
         style: new TextStyle(
             fontWeight: FontWeight.bold,
