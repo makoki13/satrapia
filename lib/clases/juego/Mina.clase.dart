@@ -30,7 +30,7 @@ class Mina extends Edificio {
     super (id, _nombre, _tipoEdificio, _posicion, _costeConstruccion, _tiempoConstruccion) {
 
     this.filon = new Productor ( null, this._recurso, 20000, 20000, 1);
-    this.almacen = new Almacen ( 67, 'Filón de ' + this._recurso.getNombre() , this._recurso, _posicion, 100);
+    this.almacen = new Almacen ( 67, 'Filón de ' + this._recurso.getNombre() , this._recurso, _posicion, 10);
     const cantidadInicial = 1;
     this.mineros = new Extractor (this.filon, this.almacen, cantidadInicial);
     this._disp.addTareaRepetitiva(extrae, 1);
@@ -47,6 +47,7 @@ class Mina extends Edificio {
     this.almacen.addCantidad (cantidad);
 
     /* Si el almacen alcanza el tope enviar un transporte de recursos a palacio */
+    //print("Cantidad: ${this.almacen.getCantidad()} vs ${this.almacen.getMaxCantidad()}");
     if (this.almacen.getCantidad() >= this.almacen.getMaxCantidad()) {
       if (this.hayEnvioEnMarcha == false) {
         this.hayEnvioEnMarcha = true;

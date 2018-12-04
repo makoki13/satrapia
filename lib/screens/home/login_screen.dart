@@ -5,6 +5,7 @@ import 'auth.dart';
 import 'database_helper.dart';
 import 'user.dart';
 import 'login_screen_presenter.dart';
+import 'routes.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -42,6 +43,10 @@ class LoginScreenState extends State<LoginScreen>
     }
   }
 
+  void _registro() {
+    Navigator.of(_ctx).pushReplacementNamed("/registro");
+  }
+
   void _showSnackBar(String text) {
     scaffoldKey.currentState
         .showSnackBar(new SnackBar(content: new Text(text)));
@@ -49,9 +54,8 @@ class LoginScreenState extends State<LoginScreen>
 
   @override
   onAuthStateChanged(AuthState state) {
-
-    if(state == AuthState.LOGGED_IN)
-      Navigator.of(_ctx).pushReplacementNamed("/home");
+    print("onAuthStateChanged ${state.toString()}");
+    if(state == AuthState.LOGGED_IN) Navigator.of(_ctx).pushReplacementNamed("/partida");
   }
 
   @override
@@ -59,8 +63,13 @@ class LoginScreenState extends State<LoginScreen>
     _ctx = context;
     var loginBtn = new RaisedButton(
       onPressed: _submit,
-      child: new Text("LOGIN"),
+      child: new Text("ENTRAR"),
       color: Colors.primaries[0],
+    );
+    var registroBtn = new RaisedButton(
+      onPressed: _registro,
+      child: new Text("Nuevo usuario"),
+      color: Colors.primaries[1],
     );
     var loginForm = new Column(
       children: <Widget>[
@@ -77,8 +86,8 @@ class LoginScreenState extends State<LoginScreen>
                 child: new TextFormField(
                   onSaved: (val) => _username = val,
                   validator: (val) {
-                    return val.length < 10
-                        ? "Username must have atleast 10 chars"
+                    return val.length < 3
+                        ? "El usuario ha de tener al menos 3 letras"
                         : null;
                   },
                   decoration: new InputDecoration(labelText: "Usuario"),
@@ -94,7 +103,8 @@ class LoginScreenState extends State<LoginScreen>
             ],
           ),
         ),
-        _isLoading ? new CircularProgressIndicator() : loginBtn
+        _isLoading ? new CircularProgressIndicator() : loginBtn,
+        _isLoading ? null : registroBtn,
       ],
       crossAxisAlignment: CrossAxisAlignment.center,
     );
@@ -114,7 +124,7 @@ class LoginScreenState extends State<LoginScreen>
               filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: new Container(
                 child: loginForm,
-                height: 300.0,
+                height: 400.0,
                 width: 300.0,
                 decoration: new BoxDecoration(
                     color: Colors.grey.shade200.withOpacity(0.5)),
@@ -139,6 +149,7 @@ class LoginScreenState extends State<LoginScreen>
     var db = new DatabaseHelper();
     await db.saveUser(user);
     var authStateProvider = new AuthStateProvider();
+    print("onLoginsuccess ${user.username}");
     authStateProvider.notify(AuthState.LOGGED_IN);
   }
 }

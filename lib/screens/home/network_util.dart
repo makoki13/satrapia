@@ -23,6 +23,11 @@ class NetworkUtil {
   }
 
   Future<dynamic> post(String url, {Map headers, body, encoding}) {
+    var completer = new Completer();
+
+    Map mapa = {"error": false, "user": {"login": "makoki", "password": "mak0k1"}};
+    completer.complete(mapa);
+    return completer.future;
     /*
     return http
         .post(url, body: body, headers: headers, encoding: encoding)
@@ -31,13 +36,11 @@ class NetworkUtil {
       final int statusCode = response.statusCode;
 
       if (statusCode < 200 || statusCode > 400 || json == null) {
-        throw new Exception("Error while fetching data");
+        throw new Exception("Error while fetching data"); OJO
       }
+
       return _decoder.convert(res);
     });
     */
-
-    final String res = "{ error: false, user: { username: “makoki”, password: “mak0k1” } }";
-    return _decoder.convert(res);
   }
 }
