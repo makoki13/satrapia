@@ -54,7 +54,6 @@ class LoginScreenState extends State<LoginScreen>
 
   @override
   onAuthStateChanged(AuthState state) {
-    print("onAuthStateChanged ${state.toString()}");
     if(state == AuthState.LOGGED_IN) Navigator.of(_ctx).pushReplacementNamed("/partida");
   }
 
@@ -63,19 +62,17 @@ class LoginScreenState extends State<LoginScreen>
     _ctx = context;
     var loginBtn = new RaisedButton(
       onPressed: _submit,
-      child: new Text("ENTRAR"),
+      child: new Text("CREAR USUARIO"),
       color: Colors.primaries[0],
-    );
-    var registroBtn = new RaisedButton(
-      onPressed: _registro,
-      child: new Text("Nuevo usuario"),
-      color: Colors.primaries[1],
     );
     var loginForm = new Column(
       children: <Widget>[
-        new Text(
-          "SATRAPÍA",
-          textScaleFactor: 2.0,
+        new Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: new Text(
+            "SATRAPÍA",
+            textScaleFactor: 2.0,
+          ),
         ),
         new Form(
           key: formKey,
@@ -93,18 +90,14 @@ class LoginScreenState extends State<LoginScreen>
                   decoration: new InputDecoration(labelText: "Usuario"),
                 ),
               ),
-              new Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: new TextFormField(
-                  onSaved: (val) => _password = val,
-                  decoration: new InputDecoration(labelText: "Contraseña"),
-                ),
-              ),
             ],
           ),
         ),
+        Divider(
+          height: 20.0,
+          color: Colors.transparent,
+        ),
         _isLoading ? new CircularProgressIndicator() : loginBtn,
-        _isLoading ? null : registroBtn,
       ],
       crossAxisAlignment: CrossAxisAlignment.center,
     );
@@ -124,7 +117,7 @@ class LoginScreenState extends State<LoginScreen>
               filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: new Container(
                 child: loginForm,
-                height: 400.0,
+                height: 250.0,
                 width: 300.0,
                 decoration: new BoxDecoration(
                     color: Colors.grey.shade200.withOpacity(0.5)),

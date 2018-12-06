@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
 
-import '../partida/partida.dart';
-
+import '../inicio/inicio.dart';
 import 'login.dart';
+import 'database_helper.dart';
 
 class HomeInicio extends StatefulWidget {
   @override
@@ -11,28 +11,20 @@ class HomeInicio extends StatefulWidget {
 }
 
 class _MyAppState extends State<HomeInicio> {
-
-  bool _usuarioRegistrado = false;
-  Widget _siguienteWidget;
-
-  _MyAppState() {
-    if (_usuarioRegistrado == true) _siguienteWidget = PartidaApp(); else _siguienteWidget = Login();
-  }
-
   @override
   Widget build(BuildContext context) {
     return new SplashScreen(
       seconds: 3,
-      navigateAfterSeconds: _siguienteWidget,
+      navigateAfterSeconds: Inicio(),
       //navigateAfterSeconds: PartidaApp(),
       title: new Text('xšaθrapā',
         style: new TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 36.0,
-            color: Colors.red
+          fontWeight: FontWeight.bold,
+          fontSize: 36.0,
+          color: Colors.red
         ),),
 
-      image: new Image.network('https://flutter.io/images/catalog-widget-placeholder.png'),
+      image: new Image.asset('imagenes/satrapia_qr.gif'),
       backgroundColor: Colors.white,
       styleTextUnderTheLoader: new TextStyle(),
       photoSize: 100.0,
