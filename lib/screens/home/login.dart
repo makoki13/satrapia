@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'routes.dart';
+import 'package:satrapia/api/routes.dart';
 import 'login_screen.dart';
 
 class Login extends StatelessWidget {

@@ -5,7 +5,7 @@ import 'auth.dart';
 import 'database_helper.dart';
 import 'user.dart';
 import 'login_screen_presenter.dart';
-import 'routes.dart';
+import 'package:satrapia/api/routes.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -54,7 +54,7 @@ class LoginScreenState extends State<LoginScreen>
 
   @override
   onAuthStateChanged(AuthState state) {
-    if(state == AuthState.LOGGED_IN) Navigator.of(_ctx).pushReplacementNamed("/partida");
+    if(state == AuthState.LOGGED_IN) Navigator.of(_ctx).pushReplacementNamed("/inicio");
   }
 
   @override

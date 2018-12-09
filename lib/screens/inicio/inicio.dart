@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../home/database_helper.dart';
 import '../home/user.dart';
-import '../home/routes.dart';
+import 'package:satrapia/api/routes.dart';
 import '../partida/partida.dart';
 
 class Inicio extends StatefulWidget {
@@ -20,12 +20,6 @@ class InicioState extends State<Inicio> {
   bool _isLoading = false;
   final formKey = new GlobalKey<FormState>();
   final scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  String _username, _password;
-
-  InicioState() {
-
-  }
 
   void _showSnackBar(String text) {
     scaffoldKey.currentState
