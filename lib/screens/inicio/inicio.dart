@@ -1,10 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import '../home/database_helper.dart';
-import '../home/user.dart';
 import 'package:satrapia/api/routes.dart';
 import '../partida/partida.dart';
+import '../../api/baseDeDatos.dart';
 
 class Inicio extends StatefulWidget {
   @override
@@ -16,6 +15,23 @@ class Inicio extends StatefulWidget {
 
 class InicioState extends State<Inicio> {
   BuildContext _ctx;
+  String _usuario;
+
+  @override
+  void initState() {
+    getUsuario().then((result) {
+      setState(() {
+        _usuario = result;
+      });
+    });
+  }
+
+  Future<String> getUsuario() async {
+    BaseDeDatos db = new BaseDeDatos();
+    await db.initDb();
+    String usuario = await db.usuario();
+    return usuario;
+  }
 
   bool _isLoading = false;
   final formKey = new GlobalKey<FormState>();
@@ -29,6 +45,17 @@ class InicioState extends State<Inicio> {
   @override
   Widget build(BuildContext context) {
     _ctx = context;
+
+    var txtUsuario = new Padding(
+      padding: const EdgeInsets.only(top: 10.0),
+      child: new Text(
+        "Bienvenido, $_usuario",
+        textScaleFactor: 1.3,
+        style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.white,
+            shadows: [Shadow(color: Colors.black, offset: Offset(2.0, 1.0), blurRadius: 0.5)],  ),
+      ),
+    );
+
     var nuevaPartidaBtn = new MaterialButton(
       height: 40.0,
       minWidth: 200.0,
@@ -71,11 +98,14 @@ class InicioState extends State<Inicio> {
 
     var botonera = new Column(
       children: <Widget>[
+        txtUsuario,
         new Padding(
           padding: const EdgeInsets.only(top: 10.0),
           child: new Text(
             "SATRAPÍA",
             textScaleFactor: 2.0,
+            style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.grey,
+              shadows: [Shadow(color: Colors.black, offset: Offset(2.0, 1.0), blurRadius: 0.5)],  ),
           ),
         ),
         Divider(
@@ -117,7 +147,7 @@ class InicioState extends State<Inicio> {
               filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: new Container(
                 child: botonera,
-                height: 330.0,
+                height: 370.0,
                 width: 300.0,
                 decoration: new BoxDecoration(
                     color: Colors.grey.shade200.withOpacity(0.5)),

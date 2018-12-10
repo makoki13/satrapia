@@ -1,22 +1,38 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-//import 'package:splashscreen/splashscreen.dart';
-
-import '../inicio/inicio.dart';
-import 'login.dart';
-import 'database_helper.dart';
-
+import '../../api/baseDeDatos.dart';
 import '../../api/routes.dart';
 
 class HomeInicio extends StatefulWidget {
+  _MyAppState _appState = _MyAppState();
   @override
-  _MyAppState createState() => new _MyAppState();
+  _MyAppState createState() {
+    return _appState;
+  }
 }
 
-class _MyAppState extends State<HomeInicio> {
 
-  veteInicio(context) {
-    Navigator.of(context).pushReplacementNamed("/inicio");
+class _MyAppState extends State<HomeInicio> {
+  String titulo = ''; //'xšaθrapIā'
+
+  @override
+  void initState() {
+    getEstado().then((result) {
+      setState(() {
+        if (result==false)
+          Navigator.pushNamedAndRemoveUntil(context, '/registro', (_) => false);
+        else
+          Navigator.pushNamedAndRemoveUntil(context, '/inicio', (_) => false);
+      });
+    });
+  }
+
+  Future<bool> getEstado() async {
+    BaseDeDatos db = new BaseDeDatos();
+    await db.initDb();
+    bool logeado = await db.isLoggedIn();
+    //logeado = false;
+    return logeado;
   }
 
   @override
@@ -24,12 +40,12 @@ class _MyAppState extends State<HomeInicio> {
     //veteInicio(context);
     return new MaterialApp(
       title: 'Satrapia',
-      home: SplashScreen(),
+      home: SplashScreen(titulo),
     );
   }
 }
 
-Widget SplashScreen() {
+Widget SplashScreen(String texto) {
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   return new Scaffold(
     appBar: null,
@@ -47,7 +63,7 @@ Widget SplashScreen() {
             child: new Container(
               child: new Center(
                 child: new Text(
-                  'xšaθrapIā',
+                  texto,
                   style: new TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 36.0,

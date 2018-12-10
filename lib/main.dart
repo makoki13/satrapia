@@ -11,28 +11,20 @@ import 'clases/tools/usuario.dart';
 import 'package:sqflite/sqflite.dart';
 
 void main() async {
+
   Widget _widget;
 
   BaseDeDatos db = new BaseDeDatos();
   await db.initDb();
 
-  Usuario usuario = Usuario('makoki','mak0k1');
-
   //await db.saveUser(usuario);
   //await db.deleteUsers();
 
-  bool logeado = await db.isLoggedIn();
-  logeado = false;
-  print("Logeado $logeado");
-  if (logeado == false)
-    _widget = HomeInicio();
-  else
-    _widget = Inicio();
   runApp(
     new MaterialApp(
       title: "Satrapia",
       routes: routes,
-      home: _widget,
+      home: HomeInicio(),
     ),
   );
 }

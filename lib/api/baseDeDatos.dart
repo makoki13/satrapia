@@ -50,4 +50,10 @@ class BaseDeDatos {
     return res.length > 0? true: false;
   }
 
+  Future<String> usuario() async {
+    var dbClient = await db;
+    var res = await dbClient.query("User");
+    return res.first['username'];
+  }
+
 }
