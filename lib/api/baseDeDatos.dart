@@ -21,6 +21,9 @@ class BaseDeDatos {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "main.db");
     var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
+
+    //await theDb.execute("CREATE TABLE Parametros(codigo TEXT, valor TEXT)");
+
     return theDb;
   }
 
@@ -29,6 +32,8 @@ class BaseDeDatos {
     // When creating the db, create the table
     await db.execute(
         "CREATE TABLE User(id INTEGER PRIMARY KEY, username TEXT, password TEXT)");
+    await db.execute(
+        "CREATE TABLE Parametros(codigo TEXT, valor TEXT)");
     print("Created tables");
   }
 
@@ -54,6 +59,41 @@ class BaseDeDatos {
     var dbClient = await db;
     var res = await dbClient.query("User");
     return res.first['username'];
+  }
+
+/** Tutorial
+ *
+ */
+
+  Future<int> saveTutorial() async {
+    var dbClient = await db;
+
+    var mapa = new Map<String, dynamic>();
+    mapa["codigo"] = 'tutorial';
+    mapa["valor"] = 'S';
+
+    int res = await dbClient.insert("Parametros", mapa);
+    print("Insertant tutorial : $res");
+    return res;
+  }
+
+  Future<bool> empezadoTutorial() async {
+    var dbClient = await db;
+    var res = await dbClient.query("parametros",
+        columns: ["valor"], //["title"],
+        where: "codigo = 'tutorial'",
+    );
+    return res.length > 0? true: false;
+  }
+
+  Future<int> deleteTutorial() async {
+    var dbClient = await db;
+
+    int res = await dbClient.delete(
+        "Parametros",
+        where: "codigo = 'tutorial'",
+    );
+    return res;
   }
 
 }

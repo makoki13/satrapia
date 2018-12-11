@@ -16,21 +16,47 @@ class Inicio extends StatefulWidget {
 class InicioState extends State<Inicio> {
   BuildContext _ctx;
   String _usuario;
+  bool _isButtonNuevaPartidaDisabled = true;
+  bool _isButtonContinuarPartidaDisabled = true;
+
+  BaseDeDatos db = new BaseDeDatos();
 
   @override
   void initState() {
-    getUsuario().then((result) {
-      setState(() {
-        _usuario = result;
+    bool resultadoTutorial;
+    inicializaDB(db).then( (result) {
+
+      //db.deleteTutorial();
+
+      haEmpezadoElTutorial(db).then( (result)  {
+        resultadoTutorial = result;
+        
+        getUsuario(db).then((result) {
+          setState(() {
+            _usuario = result;
+            _isButtonNuevaPartidaDisabled = !resultadoTutorial;
+            _isButtonContinuarPartidaDisabled = !resultadoTutorial;
+          });
+        });
       });
+
+
     });
   }
 
-  Future<String> getUsuario() async {
-    BaseDeDatos db = new BaseDeDatos();
+  Future<void> inicializaDB(db) async {
     await db.initDb();
+  }
+
+  Future<String> getUsuario(db) async {
     String usuario = await db.usuario();
     return usuario;
+  }
+
+  Future<bool> haEmpezadoElTutorial(db) async {
+    await db.initDb();
+    bool res = await db.empezadoTutorial();
+    return res;
   }
 
   bool _isLoading = false;
@@ -40,6 +66,17 @@ class InicioState extends State<Inicio> {
   void _showSnackBar(String text) {
     scaffoldKey.currentState
         .showSnackBar(new SnackBar(content: new Text(text)));
+  }
+
+  nuevaPartida() {
+    //onPressed: _isButtonDisabled ? null : _incrementCounter,
+    print("Boton nuevaPartida");
+    Navigator.of(_ctx).pushReplacementNamed("/partida");
+  }
+
+  continuarPartida() {
+    print("Boton continuarPartida");
+    Navigator.of(_ctx).pushReplacementNamed("/login");
   }
 
   @override
@@ -62,7 +99,7 @@ class InicioState extends State<Inicio> {
       color:  Colors.primaries[0],
       textColor: Colors.white,
       child: new Text("NUEVA PARTIDA"),
-      onPressed: () {Navigator.of(_ctx).pushReplacementNamed("/partida");},
+      onPressed: _isButtonNuevaPartidaDisabled ? null : nuevaPartida,
       splashColor: Colors.black,
     );
 
@@ -72,7 +109,7 @@ class InicioState extends State<Inicio> {
       color:  Colors.primaries[0],
       textColor: Colors.white,
       child: new Text("CONTINUAR PARTIDA"),
-      onPressed: () {Navigator.of(_ctx).pushReplacementNamed("/login");},
+      onPressed: _isButtonContinuarPartidaDisabled ? null : continuarPartida,
       splashColor: Colors.black,
     );
 

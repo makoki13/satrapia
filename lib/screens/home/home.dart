@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../api/baseDeDatos.dart';
-import '../../api/routes.dart';
+//import '../../api/routes.dart';
 
 class HomeInicio extends StatefulWidget {
   _MyAppState _appState = _MyAppState();
@@ -13,7 +13,7 @@ class HomeInicio extends StatefulWidget {
 
 
 class _MyAppState extends State<HomeInicio> {
-  String titulo = ''; //'xšaθrapIā'
+  String titulo = 'xšaθrapIā';
 
   @override
   void initState() {
@@ -37,7 +37,6 @@ class _MyAppState extends State<HomeInicio> {
 
   @override
   Widget build(BuildContext context) {
-    //veteInicio(context);
     return new MaterialApp(
       title: 'Satrapia',
       home: SplashScreen(titulo),
