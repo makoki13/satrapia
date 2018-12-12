@@ -44,7 +44,7 @@ class _MyAppState extends State<HomeInicio> {
     //DBProvider db = new DBProvider();
     //await db.initDb();
     bool logeado = await DBProvider.db.isLoggedIn();
-    if (logeado==true)
+    if (logeado==false)
         Navigator.pushNamedAndRemoveUntil(context, '/registro', (_) => false);
       else
         Navigator.pushNamedAndRemoveUntil(context, '/inicio', (_) => false);

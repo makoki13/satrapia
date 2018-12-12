@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../clases/tools/usuario.dart';
 import 'package:satrapia/api/routes.dart';
-import '../../api/baseDeDatos.dart';
+import '../../api/baseDeDatos2.dart';
 
 class Registro extends StatefulWidget {
   @override
@@ -28,15 +28,13 @@ class RegistroState extends State<Registro> {
 
     if (form.validate()) {
       setState(() => _isLoading = true);
-      BaseDeDatos db = new BaseDeDatos();
-      await db.initDb();
 
       String nombreUsuario = myController.text;
       Usuario usuario = Usuario(nombreUsuario,'mak0k1');
 
       print ("USUARIO: $nombreUsuario");
 
-      db.saveUser(usuario).then( (result) {
+      DBProvider.db.saveUser(usuario).then( (result) {
         print("guardado $nombreUsuario. Redirigiendo");
         Navigator.pushNamedAndRemoveUntil(context, '/inicio', (_) => false);
       });

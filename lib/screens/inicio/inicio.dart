@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:satrapia/api/routes.dart';
 import '../partida/partida.dart';
-import '../../api/baseDeDatos.dart';
+import '../../api/baseDeDatos2.dart';
 
 class Inicio extends StatefulWidget {
   @override
@@ -16,47 +16,30 @@ class Inicio extends StatefulWidget {
 class InicioState extends State<Inicio> {
   BuildContext _ctx;
   String _usuario;
-  bool _isButtonNuevaPartidaDisabled = true;
+  bool _isButtonNuevaPartidaDisabled = false;
   bool _isButtonContinuarPartidaDisabled = true;
-
-  BaseDeDatos db = new BaseDeDatos();
 
   @override
   void initState() {
-    bool resultadoTutorial;
-    inicializaDB(db).then( (result) {
-
-      //db.deleteTutorial();
-
-      haEmpezadoElTutorial(db).then( (result)  {
-        resultadoTutorial = result;
-
-        getUsuario(db).then((result) {
-          setState(() {
-            _usuario = result;
-            _isButtonNuevaPartidaDisabled = !resultadoTutorial;
-            _isButtonContinuarPartidaDisabled = !resultadoTutorial;
-          });
+    _getUsuario().then((resultUsuario) {
+      _hayPartidaNueva().then((result) {
+        print("Resultado nueva Partida: $result");
+        setState(() {
+          _usuario = resultUsuario;
+          _isButtonContinuarPartidaDisabled = !result;
         });
       });
-
-
     });
   }
 
-  Future<void> inicializaDB(db) async {
-    await db.initDb();
-  }
-
-  Future<String> getUsuario(db) async {
-    String usuario = await db.usuario();
+  Future<String> _getUsuario() async {
+    String usuario = await DBProvider.db.usuario();
     return usuario;
   }
 
-  Future<bool> haEmpezadoElTutorial(db) async {
-    await db.initDb();
-    bool res = await db.empezadoTutorial();
-    return res;
+  Future<bool> _hayPartidaNueva() async {
+    bool _partidaNueva = await DBProvider.db.hayPartidaNueva();
+    return _partidaNueva;
   }
 
   bool _isLoading = false;
@@ -76,7 +59,7 @@ class InicioState extends State<Inicio> {
 
   continuarPartida() {
     print("Boton continuarPartida");
-    Navigator.of(_ctx).pushReplacementNamed("/login");
+    Navigator.of(_ctx).pushReplacementNamed("/partida");
   }
 
   @override

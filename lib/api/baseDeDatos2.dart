@@ -22,7 +22,7 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "satrapia_001.db");
+    String path = join(documentsDirectory.path, "satrapia_003.db");
     return await openDatabase(path, version: 1, onOpen: (db) {
     }, onCreate: (Database db, int version) async {
       await db.execute(
@@ -36,7 +36,7 @@ class DBProvider {
     var dbClient = await database;
     var res = await dbClient.rawInsert(
         "INSERT Into User (id,username,password)"
-            " VALUES (1, ${user.username},${user.password})");
+            " VALUES (1, '${user.username}','${user.password}')");
     return res;
   }
 
@@ -91,5 +91,27 @@ class DBProvider {
       where: "codigo = 'tutorial'",
     );
     return res;
+  }
+
+  /** Partida nueva
+  *
+  */
+  Future<int> salvaPartidaNueva() async {
+    var dbClient = await database;
+    var res = await dbClient.rawInsert("INSERT Into Parametros (codigo,valor) VALUES ('Partida Nueva', 1)");
+    return res;
+  }
+
+  Future<int> deletePartidaNueva() async {
+    var dbClient = await database;
+    dbClient.rawDelete("Delete from Parametros WHERE Codigo='Partida Nueva'");
+  }
+
+  Future<bool> hayPartidaNueva() async {
+    var dbClient = await database;
+    var table = await dbClient.rawQuery("SELECT COUNT(*) FROM Parametros WHERE Codigo='Partida Nueva'");
+    int resultado = Sqflite.firstIntValue(table);
+    print("Resultado: $resultado");
+    return (resultado > 0);
   }
 }
