@@ -30,7 +30,7 @@ class InicioState extends State<Inicio> {
 
       haEmpezadoElTutorial(db).then( (result)  {
         resultadoTutorial = result;
-        
+
         getUsuario(db).then((result) {
           setState(() {
             _usuario = result;
