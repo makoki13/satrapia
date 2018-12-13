@@ -35,14 +35,14 @@ class Palacio extends Edificio {
     this.almacen = new Almacen ( 66, 'Deposito de oro', ORO, _capital.getPosicion(), Parametros.MAX_ENTERO);
     this.almacen.addCantidad(Parametros.oroInicial);
     this._recaudador = new Extractor (this._impuestos, this.almacen, cantidadInicial);
-    this._disp.addTareaRepetitiva(recaudaImpuestos, 1);
+    //this._disp.addTareaRepetitiva(recaudaImpuestos, 1);
 
     cantidadInicial = 100; const cantidadMaxima = 0;
     this._alojamientos = new Productor ( null, POBLACION, cantidadInicial, cantidadMaxima, 1);
     this.poblacion = new Almacen ( 67, 'Población', POBLACION, _capital.getPosicion(), 1000);
     this._crecimientoDemografico = new Extractor (this._alojamientos, this.poblacion, 10);
 
-    this._disp.addTareaRepetitiva(realizaCenso, 1);
+    //this._disp.addTareaRepetitiva(realizaCenso, 1);
   }
 
   String toString() { return this._nombre;}
@@ -73,5 +73,13 @@ class Palacio extends Edificio {
 
   entraOro(num cantidad) {
     this.almacen.addCantidad (cantidad);
+  }
+
+  iniciaRecaudacion() {
+    this._disp.addTareaRepetitiva(recaudaImpuestos, 1);
+  }
+
+  iniciaCenso() {
+    this._disp.addTareaRepetitiva(realizaCenso, 1);
   }
 }

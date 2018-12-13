@@ -2,6 +2,8 @@ import 'package:scoped_model/scoped_model.dart';
 
 //import '../msr/msr.dart'; En un futuro muy lejano
 import 'models.dart';
+import 'apiModelo.dart';
+
 import '../clases/juego/Dispatcher.clase.dart';
 import '../clases/juego/Parametros.clase.dart';
 import '../clases/juego/Recurso.clase.dart';
@@ -45,9 +47,8 @@ class Estructura {
 class API {  
   static ModeloPrincipal _modelo;
 
-  static void generaImperio(int jugador, Model modelo) {
-    _modelo = modelo;
-
+  static _inicializaEstructura(jugador) {
+    //mover estas intrucciones a _generaRegistros y _cargaRegistros
     Estructura._dispatcher = new Dispatcher();
     Estructura._jugador = new Jugador(jugador, 1, 'Makoki', TipoJugador.EMPERADOR);
     Estructura._imperio = new Imperio(1,'Imperio de Makoki',Estructura._jugador,false);
@@ -64,11 +65,11 @@ class API {
     Estructura._capital.setPalacio(Estructura._palacio);
 
     //generar silos
-    Estructura._silo = new Silos(1,'Silos',Estructura._capital,Estructura._dispatcher);    
+    Estructura._silo = new Silos(1,'Silos',Estructura._capital,Estructura._dispatcher);
     Almacen miAlmacenDeComida = new Almacen(1, 'Silo de comida', COMIDA , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeComida);
     Almacen miAlmacenDeMadera = new Almacen(2, 'Silo de madera', MADERA , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeMadera);
     Almacen miAlmacenDePiedra = new Almacen(3, 'Silo de piedra', PIEDRA , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDePiedra);
-    Almacen miAlmacenDeHierro = new Almacen(4, 'Silo de hierro', HIERRO , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeHierro);    
+    Almacen miAlmacenDeHierro = new Almacen(4, 'Silo de hierro', HIERRO , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeHierro);
     Estructura._capital.setSilos(Estructura._silo);
 
     //generar cuartel
@@ -81,11 +82,37 @@ class API {
     Estructura.serrerias = new List<Serreria>();
     Estructura.canteras = new List<Cantera>();
     Estructura.minasDeHierro = new List<MinaDeHierro>();
-
-    return;
   }
 
-  static Estructura cargaImperio(int jugador) { return null;}
+  static _generaRegistros() {
+    ApiModelo.generaRegistroDispatcher();
+    ApiModelo.generaRegistroJugador();
+    ApiModelo.generaRegistroImperio();
+    ApiModelo.generaRegistroProvincia();
+    ApiModelo.generaRegistroCapital();
+    ApiModelo.generaRegistroPalacio();
+    ApiModelo.generaRegistroSilos();
+    ApiModelo.generaRegistroCuartel();
+    ApiModelo.generaRegistroCentroDeInvestigacion();
+  }
+
+  static _cargaRegistros() {
+
+  }
+
+  static void generaImperio(int jugador, Model modelo) {
+    _modelo = modelo;
+
+    _inicializaEstructura(jugador);
+    _generaRegistros();
+    Estructura._palacio.iniciaCenso();
+    Estructura._palacio.iniciaRecaudacion();
+  }
+
+  static void cargaImperio(int jugador, Model modelo) {
+    _inicializaEstructura(jugador);
+    _cargaRegistros();
+  }
 
   static int getPoblacionActual() {
     return Estructura._palacio.getPoblacionActual();

@@ -24,7 +24,7 @@ class PartidaApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: PartidaHome('Scoped Model Demo'),
+        home: PartidaHome('Satrapía'),
       ),
     );
   }
