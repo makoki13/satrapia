@@ -47,24 +47,30 @@ class Estructura {
 class API {  
   static ModeloPrincipal _modelo;
 
-  static _inicializaEstructura(jugador) {
-    //mover estas intrucciones a _generaRegistros y _cargaRegistros
+  static _generaRegistros(jugador) {
+    ApiModelo.generaRegistroDispatcher();
     Estructura._dispatcher = new Dispatcher();
+
+    ApiModelo.generaRegistroJugador();
     Estructura._jugador = new Jugador(jugador, 1, 'Makoki', TipoJugador.EMPERADOR);
+
+    ApiModelo.generaRegistroImperio();
     Estructura._imperio = new Imperio(1,'Imperio de Makoki',Estructura._jugador,false);
+
+    ApiModelo.generaRegistroProvincia();
     Estructura._provincia = new Provincia(1, 'Provincia de Makoki', Estructura._jugador, false, true);
 
+    ApiModelo.generaRegistroCapital();
     Punto _miPosicion = new Punto(100,100,0);
     Estructura._capital = new Capital(1, 'Capital de Makoki', Estructura._provincia, _miPosicion);
-
     Estructura._ciudades = new List<Localidad>();
     Estructura._ciudades.add(Estructura._capital);
 
-    //generar palacio
+    ApiModelo.generaRegistroPalacio();
     Estructura._palacio  = new Palacio(1,'Palacio de Makoki',Estructura._capital,Estructura._dispatcher);
     Estructura._capital.setPalacio(Estructura._palacio);
 
-    //generar silos
+    ApiModelo.generaRegistroSilos();
     Estructura._silo = new Silos(1,'Silos',Estructura._capital,Estructura._dispatcher);
     Almacen miAlmacenDeComida = new Almacen(1, 'Silo de comida', COMIDA , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeComida);
     Almacen miAlmacenDeMadera = new Almacen(2, 'Silo de madera', MADERA , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeMadera);
@@ -72,10 +78,10 @@ class API {
     Almacen miAlmacenDeHierro = new Almacen(4, 'Silo de hierro', HIERRO , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeHierro);
     Estructura._capital.setSilos(Estructura._silo);
 
-    //generar cuartel
+    ApiModelo.generaRegistroCuartel();
     Estructura._cuartel = new Cuartel(1, 'Cuartel de Makoki', Estructura._capital, Estructura._dispatcher);
 
-    //generar centro de investigacion
+    ApiModelo.generaRegistroCentroDeInvestigacion();
     Estructura._centroDeInvestigacion = new CentroDeInvestigacion(1, 'Centro de investigación de Makoki', Estructura._capital, Estructura._dispatcher);
 
     Estructura.granjas = new List<Granja>();
@@ -84,35 +90,27 @@ class API {
     Estructura.minasDeHierro = new List<MinaDeHierro>();
   }
 
-  static _generaRegistros() {
-    ApiModelo.generaRegistroDispatcher();
-    ApiModelo.generaRegistroJugador();
-    ApiModelo.generaRegistroImperio();
-    ApiModelo.generaRegistroProvincia();
-    ApiModelo.generaRegistroCapital();
-    ApiModelo.generaRegistroPalacio();
-    ApiModelo.generaRegistroSilos();
-    ApiModelo.generaRegistroCuartel();
-    ApiModelo.generaRegistroCentroDeInvestigacion();
-  }
-
-  static _cargaRegistros() {
+  static _cargaRegistros(jugador) {
 
   }
 
   static void generaImperio(int jugador, Model modelo) {
     _modelo = modelo;
 
-    _inicializaEstructura(jugador);
-    _generaRegistros();
+    _generaRegistros(jugador);
     Estructura._palacio.iniciaCenso();
     Estructura._palacio.iniciaRecaudacion();
   }
 
   static void cargaImperio(int jugador, Model modelo) {
-    _inicializaEstructura(jugador);
-    _cargaRegistros();
+    return; //Pendiente
+    _cargaRegistros(jugador);
+    Estructura._palacio.iniciaCenso();
+    Estructura._palacio.iniciaRecaudacion();
   }
+
+
+
 
   static int getPoblacionActual() {
     return Estructura._palacio.getPoblacionActual();

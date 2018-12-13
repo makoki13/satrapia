@@ -1,4 +1,5 @@
 class ApiModelo {
+  /* Estos registros inicializa (update) a valores iniciales */
   static generaRegistroDispatcher() {}
   static generaRegistroJugador() {}
   static generaRegistroImperio() {}

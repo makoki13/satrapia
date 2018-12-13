@@ -22,13 +22,31 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "satrapia_003.db");
+    String path = join(documentsDirectory.path, "satrapia_004.db");
     return await openDatabase(path, version: 1, onOpen: (db) {
     }, onCreate: (Database db, int version) async {
-      await db.execute(
-          "CREATE TABLE User(id INTEGER PRIMARY KEY, username TEXT, password TEXT)");
-      await db.execute(
-          "CREATE TABLE Parametros(codigo TEXT, valor TEXT)");
+      await db.execute("CREATE TABLE User(id INTEGER PRIMARY KEY, username TEXT, password TEXT)");
+      await db.execute("CREATE TABLE Parametros(codigo TEXT, valor TEXT)");
+
+      await db.execute("CREATE TABLE Dispatcher(codigo INTEGER PRIMARY KEY, valor TEXT)");
+      await db.execute("CREATE TABLE Jugador(id INTEGER PRIMARY KEY, usuario INTEGER, nombre TEXT, tipo INTEGER)");
+      /* Tipo: 1: Imperio 2: Tribu */
+      await db.execute("CREATE TABLE Imperio(id INTEGER PRIMARY KEY, jugador INTEGER, nombre TEXT, tipo INTEGER)");
+      await db.execute("CREATE TABLE Provincia(id INTEGER PRIMARY KEY, jugador INTEGER, nombre TEXT, tribu INTEGER, satrapia INTEGER)");
+      await db.execute("CREATE TABLE Capital(id INTEGER PRIMARY KEY, nombre TEXT, provincia INTEGER, x INTEGER, y INTEGER, z INTEGER)");
+      await db.execute("CREATE TABLE Palacio(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER)");
+      await db.execute("""
+        CREATE TABLE Silos(
+          id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER, 
+          comida_stock INTEGER, comida_capacidad INTEGER, 
+          madera_stock INTEGER, madera_capacidad INTEGER, 
+          piedra_stock INTEGER, piedra_capacidad INTEGER,
+          hierro_stock INTEGER, hierro_capacidad INTEGER
+        )
+      """);
+      await db.execute("CREATE TABLE Cuartel(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER)");
+      await db.execute("CREATE TABLE CentroDeInvestigacion(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER)");
+
     });
   }
 
