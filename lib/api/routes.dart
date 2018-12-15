@@ -10,7 +10,7 @@ final routes = {
   //'/login':          (BuildContext context) => LoginScreen(),
   '/registro':       (BuildContext context) => Registro(),
   '/inicio' :          (BuildContext context) => Inicio(),
-  '/partida':        (BuildContext context) => PartidaApp(),
+  //'/partida':        (BuildContext context) => PartidaApp(),
   '/tutorial':       (BuildContext context) => Tutorial(),
   '/configuracion':  (BuildContext context) => Configuracion(),
 };

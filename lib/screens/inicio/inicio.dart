@@ -54,12 +54,26 @@ class InicioState extends State<Inicio> {
   nuevaPartida() {
     //onPressed: _isButtonDisabled ? null : _incrementCounter,
     print("Boton nuevaPartida");
-    Navigator.of(_ctx).pushReplacementNamed("/partida");
+    //Navigator.of(_ctx).pushReplacementNamed("/partida");
+    //Navigator.pushNamed(context, "/partida");
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+        builder: (context) => PartidaApp(true),
+        ),
+    );
   }
 
   continuarPartida() {
     print("Boton continuarPartida");
-    Navigator.of(_ctx).pushReplacementNamed("/partida");
+    //Navigator.of(_ctx).pushReplacementNamed("/partida");
+    //Navigator.pushNamed(context, "/partida");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PartidaApp(false),
+      ),
+    );
   }
 
   @override

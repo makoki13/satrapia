@@ -9,6 +9,10 @@ import 'partidaHome.dart';
 
 class PartidaApp extends StatelessWidget {
 
+  bool esNueva;
+
+  PartidaApp(this.esNueva);
+
   Principal miPrincipal = Principal();
   ModeloPrincipal _modeloPrincipal = Principal.getModelo();
 
@@ -24,7 +28,7 @@ class PartidaApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: PartidaHome('Satrapía'),
+        home: PartidaHome('Satrapía', esNueva),
       ),
     );
   }

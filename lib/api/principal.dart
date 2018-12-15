@@ -33,7 +33,8 @@ class Principal {
     return _partidaNueva;
   }
 
-  static Future<void> cargaPartida() async {
+  static Future<void> cargaPartida(bool esPartidanueva) async {
+    /*
     _hayPartidaNueva().then((resultado) async {      
       if (resultado == false) {
         print("CREA PARTIDA");
@@ -45,5 +46,15 @@ class Principal {
         API.cargaImperio(0, _modelo);
       }
     });
+    */
+    if (esPartidanueva==true) {
+      print("CREA PARTIDA");
+      DBProvider.db.salvaPartidaNueva();
+      var res = await API.generaImperio(0, _modelo);
+    }
+    else {
+      print("CARGA PARTIDA");
+      API.cargaImperio(0, _modelo);
+    }
   }
 }

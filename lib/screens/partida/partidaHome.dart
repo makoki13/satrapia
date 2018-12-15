@@ -7,8 +7,9 @@ import '../../api/api.dart';
 
 class PartidaHome extends StatelessWidget {
   final String title;
+  final bool partidaNueva;
 
-  PartidaHome(this.title);
+  PartidaHome(this.title, this.partidaNueva);
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +18,15 @@ class PartidaHome extends StatelessWidget {
         title: Text(title),
       ),
 
-      body: futureWidget(),
+      body: futureWidget(this.partidaNueva),
     );
   }
 }
 
 
-Widget futureWidget() {
+Widget futureWidget(bool partidaNueva) {
   return new FutureBuilder<bool>(
-    future: getDataFB(),
+    future: getDataFB(partidaNueva),
     builder: (context, snapshot) {
       if (snapshot.hasData) {        
         return widgetPrincipal();
@@ -37,8 +38,8 @@ Widget futureWidget() {
   );
 }
 
-Future<bool> getDataFB() async {
-  await Principal.cargaPartida();
+Future<bool> getDataFB(bool partidaNueva) async {
+  await Principal.cargaPartida(partidaNueva);
 
   return true;
 }
