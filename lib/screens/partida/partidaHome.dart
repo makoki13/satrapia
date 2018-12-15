@@ -29,8 +29,18 @@ class PartidaHome extends StatelessWidget {
             // rebuild any time the CounterModel changes (i.e. after we
             // `notifyListeners` in the Model).
             ScopedModelDescendant<ModeloPrincipal>(
-              builder: (context, child, model) => Text(API.getOroActual().toString(),
-                  style: Theme.of(context).textTheme.display1),
+              builder: (context, child, model)  {
+                if (API != null)
+                  return Text(
+                      API.getOroActual().toString(),
+                      style: Theme.of(context).textTheme.display1,
+                  );
+                else
+                  return Text(
+                    '',
+                    style: Theme.of(context).textTheme.display1,
+                  );
+              }
             ),
             Text(
               'Cantidad de población:',

@@ -16,7 +16,10 @@ class Punto {
   num _y;
   num _z;
 
-  Punto(this._x, this._y, this._z) { this._edificio = null; }
+  Punto(this._x, this._y, this._z) {
+    this._edificio = null;
+    this._z = 0;
+  }
 
   setAltura (num z) { this._z = z; }
 
@@ -24,6 +27,8 @@ class Punto {
 
   num getX() { return this._x; }
   num getY() { return this._y; }
+  num getZ() { return this._z; }
+
   TipoEdificio getEdificio() { return this._edificio; }
   TipoTerreno getTerreno() { return this._tipoDeTerreno; }
 }

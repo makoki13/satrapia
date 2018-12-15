@@ -18,8 +18,24 @@ class Principal {
     _modelo = ModeloPrincipal();
 
     DBProvider.db.salvaPartidaNueva();
-    API.generaImperio(0, _modelo);
-    _pruebas();
+
+    //API.generaImperio(0, _modelo);
+
+
+    print("Antes de cargaPrincipal");
+    cargaPrincipal().then( (valor) {
+      //_pruebas();
+    });
+    print("Despues de cargaPrincipal");
+
+
+
+  }
+
+  Future<void> cargaPrincipal() async {
+    print("Antes de API");
+    await API.cargaImperio(0, _modelo);
+    print("Despues de API");
   }
 
   static ModeloPrincipal getModelo() => _modelo;
@@ -40,32 +56,5 @@ class Principal {
         API.cargaImperio(1, _modelo);
       }
     });
-  }
-
-  void _pruebas() {
-    /* Proposito de pruebas */
-    Punto posicion = new Punto(105, 103, 0);
-    API.creaGranja(posicion);
-    posicion = new Punto(106, 103, 0);
-    API.creaGranja(posicion);
-    //API.destruyeGranja(1);
-
-    posicion = new Punto(103, 107, 0);
-    API.creaSerreria(posicion);
-    posicion = new Punto(101, 106, 0);
-    API.creaSerreria(posicion);
-    //API.destruyeSerreria(1);
-
-    posicion = new Punto(104, 105, 0);
-    API.creaCantera(posicion);
-    posicion = new Punto(105, 104, 0);
-    API.creaCantera(posicion);
-    //API.destruyeSerreria(1);
-
-    posicion = new Punto(111, 115, 0);
-    API.creaMinaDeHierro(posicion);
-    posicion = new Punto(110, 108, 0);
-    API.creaMinaDeHierro(posicion);
-    //API.destruyeMinaDeHierro(1);
   }
 }

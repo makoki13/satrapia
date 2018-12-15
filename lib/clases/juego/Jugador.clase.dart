@@ -5,6 +5,7 @@ class Jugador {
   int _idUsuario;
   String _nombre;
   TipoJugador _tipo;
+
   Jugador (this._idJugador, this._idUsuario, this._nombre, this._tipo) {
 
   }

@@ -17,8 +17,8 @@ class Palacio extends Edificio {
   Productor _impuestos;
   Productor _alojamientos;
 
-  Almacen almacen;
-  Almacen poblacion;
+  Almacen _oro;
+  Almacen _poblacion;
 
   num _id;
   String _nombre;
@@ -32,15 +32,15 @@ class Palacio extends Edificio {
 
     num cantidadInicial = 2;
     this._impuestos = new Productor ( null, ORO, 2, 0, 1);
-    this.almacen = new Almacen ( 66, 'Deposito de oro', ORO, _capital.getPosicion(), Parametros.MAX_ENTERO);
-    this.almacen.addCantidad(Parametros.oroInicial);
-    this._recaudador = new Extractor (this._impuestos, this.almacen, cantidadInicial);
+    this._oro = new Almacen ( 66, 'Deposito de oro', ORO, _capital.getPosicion(), Parametros.MAX_ENTERO);
+    this._oro.addCantidad(Parametros.oroInicial);
+    this._recaudador = new Extractor (this._impuestos, this._oro, cantidadInicial);
     //this._disp.addTareaRepetitiva(recaudaImpuestos, 1);
 
     cantidadInicial = 100; const cantidadMaxima = 0;
     this._alojamientos = new Productor ( null, POBLACION, cantidadInicial, cantidadMaxima, 1);
-    this.poblacion = new Almacen ( 67, 'Población', POBLACION, _capital.getPosicion(), 1000);
-    this._crecimientoDemografico = new Extractor (this._alojamientos, this.poblacion, 10);
+    this._poblacion = new Almacen ( 67, 'Población', POBLACION, _capital.getPosicion(), 1000);
+    this._crecimientoDemografico = new Extractor (this._alojamientos, this._poblacion, 10);
 
     //this._disp.addTareaRepetitiva(realizaCenso, 1);
   }
@@ -49,30 +49,41 @@ class Palacio extends Edificio {
 
   recaudaImpuestos ( ) {
     num cantidad = this._recaudador.getCantidad();
-    this.almacen.addCantidad (cantidad);
+    this._oro.addCantidad (cantidad);
     API.setOroActual();
   }
 
   realizaCenso ( ) {
     num cantidad = this._crecimientoDemografico.getCantidad();
-    this.poblacion.addCantidad (cantidad);
+    this._poblacion.addCantidad (cantidad);
     API.setPoblacionActual();
   }
 
-  num getOroActual() { return this.almacen.getCantidad(); }
-  num getPoblacionActual() { return this.poblacion.getCantidad(); }
+  num getOroActual() { return this._oro.getCantidad(); }
+  num getPoblacionActual() { return this._poblacion.getCantidad(); }
 
-  Almacen getAlmacen ()  { return this.almacen; }
+  Almacen getAlmacen ()  { return this._oro; }
 
   num gastaOro(num cantidad) {
-    num cantidadActual = this.almacen.getCantidad();
+    num cantidadActual = this._oro.getCantidad();
     if ( cantidadActual < cantidad ) {cantidad = cantidadActual; }
-    this.almacen.restaCantidad(cantidad);
+    this._oro.restaCantidad(cantidad);
     return cantidad;
   }
 
   entraOro(num cantidad) {
-    this.almacen.addCantidad (cantidad);
+    this._oro.addCantidad (cantidad);
+  }
+
+
+  setOro(num cantidad) {
+    this._oro.restaCantidad(this._oro.getCantidad());
+    entraOro(cantidad);
+  }
+
+  setPoblacion(num cantidad) {
+    this._poblacion.restaCantidad(this._poblacion.getCantidad());
+    this._poblacion.addCantidad(cantidad);
   }
 
   iniciaRecaudacion() {

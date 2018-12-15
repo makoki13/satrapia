@@ -51,26 +51,26 @@ class API {
     ApiModelo.generaRegistroDispatcher();
     Estructura._dispatcher = new Dispatcher();
 
-    ApiModelo.generaRegistroJugador();
-    Estructura._jugador = new Jugador(jugador, 1, 'Makoki', TipoJugador.EMPERADOR);
+    Estructura._jugador = Jugador(jugador, 1, 'Makoki', TipoJugador.EMPERADOR);
+    ApiModelo.generaRegistroJugador(Estructura._jugador);
 
-    ApiModelo.generaRegistroImperio();
+    ApiModelo.generaRegistroImperio(Estructura._jugador);
     Estructura._imperio = new Imperio(1,'Imperio de Makoki',Estructura._jugador,false);
 
-    ApiModelo.generaRegistroProvincia();
+    ApiModelo.generaRegistroProvincia(Estructura._jugador);
     Estructura._provincia = new Provincia(1, 'Provincia de Makoki', Estructura._jugador, false, true);
 
-    ApiModelo.generaRegistroCapital();
     Punto _miPosicion = new Punto(100,100,0);
+    ApiModelo.generaRegistroCiudad(Estructura._provincia, _miPosicion, true);
     Estructura._capital = new Capital(1, 'Capital de Makoki', Estructura._provincia, _miPosicion);
     Estructura._ciudades = new List<Localidad>();
     Estructura._ciudades.add(Estructura._capital);
 
-    ApiModelo.generaRegistroPalacio();
+    ApiModelo.generaRegistroPalacio(Estructura._capital);
     Estructura._palacio  = new Palacio(1,'Palacio de Makoki',Estructura._capital,Estructura._dispatcher);
     Estructura._capital.setPalacio(Estructura._palacio);
 
-    ApiModelo.generaRegistroSilos();
+    ApiModelo.generaRegistroSilos(Estructura._capital);
     Estructura._silo = new Silos(1,'Silos',Estructura._capital,Estructura._dispatcher);
     Almacen miAlmacenDeComida = new Almacen(1, 'Silo de comida', COMIDA , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeComida);
     Almacen miAlmacenDeMadera = new Almacen(2, 'Silo de madera', MADERA , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeMadera);
@@ -78,10 +78,10 @@ class API {
     Almacen miAlmacenDeHierro = new Almacen(4, 'Silo de hierro', HIERRO , _miPosicion, Parametros.MAX_ENTERO); Estructura._silo.addAlmacen(miAlmacenDeHierro);
     Estructura._capital.setSilos(Estructura._silo);
 
-    ApiModelo.generaRegistroCuartel();
+    ApiModelo.generaRegistroCuartel(Estructura._capital);
     Estructura._cuartel = new Cuartel(1, 'Cuartel de Makoki', Estructura._capital, Estructura._dispatcher);
 
-    ApiModelo.generaRegistroCentroDeInvestigacion();
+    ApiModelo.generaRegistroCentroDeInvestigacion(Estructura._capital);
     Estructura._centroDeInvestigacion = new CentroDeInvestigacion(1, 'Centro de investigación de Makoki', Estructura._capital, Estructura._dispatcher);
 
     Estructura.granjas = new List<Granja>();
@@ -90,8 +90,35 @@ class API {
     Estructura.minasDeHierro = new List<MinaDeHierro>();
   }
 
-  static _cargaRegistros(jugador) {
+  static Future<void> _cargaRegistros(int jugador) async {
+    Estructura._dispatcher = ApiModelo.getDispatcher();
 
+    Estructura._jugador = await ApiModelo.getJugador(jugador);
+
+    Estructura._imperio = await ApiModelo.getImperio(Estructura._jugador);
+
+    Estructura._provincia = await ApiModelo.getProvincia(Estructura._jugador);
+
+    print ("Provincia ${Estructura._provincia.getID()}");
+
+    Estructura._capital = await ApiModelo.getCapital(Estructura._provincia);
+    Estructura._ciudades = new List<Localidad>();
+    Estructura._ciudades.add(Estructura._capital);
+
+    Estructura._palacio  = await ApiModelo.getPalacio(Estructura._capital, Estructura._dispatcher);
+    Estructura._capital.setPalacio(Estructura._palacio);
+
+    Estructura._silo = await ApiModelo.getSilos(Estructura._capital, Estructura._dispatcher);
+    Estructura._capital.setSilos(Estructura._silo);
+
+    Estructura._cuartel = await ApiModelo.getCuartel(Estructura._capital, Estructura._dispatcher);
+
+    Estructura._centroDeInvestigacion = await ApiModelo.getCentroDeInvestigacion(Estructura._capital, Estructura._dispatcher);
+
+    Estructura.granjas = ApiModelo.getGranjas();
+    Estructura.serrerias = ApiModelo.getSerrerias();
+    Estructura.canteras = ApiModelo.getCanteras();
+    Estructura.minasDeHierro = ApiModelo.getMinasDeHierro();
   }
 
   static void generaImperio(int jugador, Model modelo) {
@@ -103,24 +130,54 @@ class API {
   }
 
   static void cargaImperio(int jugador, Model modelo) {
-    return; //Pendiente
-    _cargaRegistros(jugador);
-    Estructura._palacio.iniciaCenso();
-    Estructura._palacio.iniciaRecaudacion();
+    _modelo = modelo;
+
+    _cargaRegistros(jugador).then( (nada) {
+      Estructura._palacio.iniciaCenso();
+      Estructura._palacio.iniciaRecaudacion();
+
+      _pruebas();
+    });
   }
 
+  static void _pruebas() {
+    /* Proposito de pruebas */
+    Punto posicion = new Punto(105, 103, 0);
+    API.creaGranja(posicion);
+    posicion = new Punto(106, 103, 0);
+    API.creaGranja(posicion);
+    //API.destruyeGranja(1);
 
+    posicion = new Punto(103, 107, 0);
+    API.creaSerreria(posicion);
+    posicion = new Punto(101, 106, 0);
+    API.creaSerreria(posicion);
+    //API.destruyeSerreria(1);
+
+    posicion = new Punto(104, 105, 0);
+    API.creaCantera(posicion);
+    posicion = new Punto(105, 104, 0);
+    API.creaCantera(posicion);
+    //API.destruyeSerreria(1);
+
+    posicion = new Punto(111, 115, 0);
+    API.creaMinaDeHierro(posicion);
+    posicion = new Punto(110, 108, 0);
+    API.creaMinaDeHierro(posicion);
+    //API.destruyeMinaDeHierro(1);
+  }
 
 
   static int getPoblacionActual() {
-    return Estructura._palacio.getPoblacionActual();
+    if (Estructura._palacio!=null) return Estructura._palacio.getPoblacionActual(); else return 0;
   }
 
   static int getOroActual() {
-    return Estructura._palacio.getOroActual();
+    if (Estructura._palacio!=null) return Estructura._palacio.getOroActual(); else return 0;
   }
 
   static void setOroActual() {
+    ApiModelo.setOro(API.getOroActual());
     _modelo.notifica();
   }
 
@@ -128,10 +185,18 @@ class API {
     _modelo.notifica();
   }
 
-  static int getStockComida() { return Estructura._silo.getAlmacenComida().getCantidad();}
-  static int getStockMadera() { return Estructura._silo.getAlmacenMadera().getCantidad();}
-  static int getStockPiedra() { return Estructura._silo.getAlmacenPiedra().getCantidad();}
-  static int getStockHierro() { return Estructura._silo.getAlmacenHierro().getCantidad();}
+  static int getStockComida() {
+    if (Estructura._silo!=null ) return Estructura._silo.getAlmacenComida().getCantidad(); else return 0;
+  }
+  static int getStockMadera() {
+    if (Estructura._silo!=null ) return Estructura._silo.getAlmacenMadera().getCantidad(); else return 0;
+  }
+  static int getStockPiedra() {
+    if (Estructura._silo!=null ) return Estructura._silo.getAlmacenPiedra().getCantidad(); else return 0;
+  }
+  static int getStockHierro() {
+    if (Estructura._silo!=null ) return Estructura._silo.getAlmacenHierro().getCantidad(); else return 0;
+  }
 
   static void setStockComida() {
     _modelo.notifica();
