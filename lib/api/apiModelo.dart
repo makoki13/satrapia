@@ -112,6 +112,15 @@ class ApiModelo {
     return DBProvider.db.getCentroDeInvestigacion(capital, dispatcher);
   }
 
+  static void setOro(int oroActual) {
+    DBProvider.db.setOro(oroActual);
+  }
+
+
+
+
+
+  /** TODO coger granjas, serrerias, canteras y minas de ls BD */
   static List<Granja> getGranjas() {
     return new List<Granja>();
   }
@@ -128,8 +137,32 @@ class ApiModelo {
     return new List<MinaDeHierro>();
   }
 
-  static void setOro(int oroActual) {
-    DBProvider.db.setOro(oroActual);
-  }
+  static void inicializaCentrosDeRecursos() {}
+
+  static void setPoblacion(int poblacionActual) {}
+
+  static void setComida(void setStockComida) {}
+
+  static void setMadera(void setStockMadera) {}
+
+  static void setPiedra(void setStockPiedra) {}
+
+  static void setHierro(void setStockHierro) {}
+
+  static void addGranja() {}
+
+  static void deleteGranja() {}
+
+  static void addSerreria() {}
+
+  static void deleteSerreria() {}
+
+  static void addCantera() {}
+
+  static void deleteCantera() {}
+
+  static void addMinaDeHierro() {}
+
+  static void deleteMinaDeHierro() {}
 
 }

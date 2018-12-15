@@ -84,6 +84,7 @@ class API {
     ApiModelo.generaRegistroCentroDeInvestigacion(Estructura._capital);
     Estructura._centroDeInvestigacion = new CentroDeInvestigacion(1, 'Centro de investigación de Makoki', Estructura._capital, Estructura._dispatcher);
 
+    ApiModelo.inicializaCentrosDeRecursos();
     Estructura.granjas = new List<Granja>();
     Estructura.serrerias = new List<Serreria>();
     Estructura.canteras = new List<Cantera>();
@@ -138,8 +139,6 @@ class API {
     _cargaRegistros(jugador).then( (nada) {
       Estructura._palacio.iniciaCenso();
       Estructura._palacio.iniciaRecaudacion();
-
-      _pruebas();
     });
   }
 
@@ -170,7 +169,6 @@ class API {
     //API.destruyeMinaDeHierro(1);
   }
 
-
   static int getPoblacionActual() {
     if (Estructura._palacio!=null) return Estructura._palacio.getPoblacionActual(); else return 0;
   }
@@ -185,6 +183,7 @@ class API {
   }
 
   static void setPoblacionActual() {
+    ApiModelo.setPoblacion(API.getPoblacionActual());
     _modelo.notifica();
   }
 
@@ -202,18 +201,22 @@ class API {
   }
 
   static void setStockComida() {
+    ApiModelo.setComida(API.setStockComida());
     _modelo.notifica();
   }
 
   static void setStockMadera() {
+    ApiModelo.setMadera(API.setStockMadera());
     _modelo.notifica();
   }
 
   static void setStockPiedra() {
+    ApiModelo.setPiedra(API.setStockPiedra());
     _modelo.notifica();
   }
 
   static void setStockHierro() {
+    ApiModelo.setHierro(API.setStockHierro());
     _modelo.notifica();
   }
 
@@ -222,6 +225,9 @@ class API {
     int indice = Estructura.granjas.length + 1;
     Granja _granja = new Granja(indice, 'Granja de Makoki $indice', posicion, Estructura._capital, Estructura._dispatcher);
     Estructura.granjas.add(_granja);
+
+    ApiModelo.addGranja();
+
     return indice;
   }
 
@@ -235,6 +241,7 @@ class API {
     }
     if (encontrado==true) {
       Estructura.granjas.removeAt(indice);
+      ApiModelo.deleteGranja();
       return 0;
     }
 
@@ -250,6 +257,7 @@ class API {
     int indice = Estructura.serrerias.length + 1;
     Serreria _serreria = new Serreria(indice, 'Serreria de Makoki $indice', posicion, Estructura._capital, Estructura._dispatcher);
     Estructura.serrerias.add(_serreria);
+    ApiModelo.addSerreria();
     return indice;
   }
 
@@ -263,6 +271,7 @@ class API {
     }
     if (encontrado==true) {
       Estructura.serrerias.removeAt(indice);
+      ApiModelo.deleteSerreria();
       return 0;
     }
 
@@ -278,6 +287,7 @@ class API {
     int indice = Estructura.canteras.length + 1;
     Cantera _cantera = new Cantera(indice, 'Cantera de Makoki $indice', posicion, Estructura._capital, Estructura._dispatcher);
     Estructura.canteras.add(_cantera);
+    ApiModelo.addCantera();
     return indice;
   }
 
@@ -291,6 +301,7 @@ class API {
     }
     if (encontrado==true) {
       Estructura.canteras.removeAt(indice);
+      ApiModelo.deleteCantera();
       return 0;
     }
 
@@ -306,6 +317,7 @@ class API {
     int indice = Estructura.minasDeHierro.length + 1;
     MinaDeHierro _minaDeHierro = new MinaDeHierro(indice, 'Mina de hierro de Makoki $indice', posicion, Estructura._capital, Estructura._dispatcher);
     Estructura.minasDeHierro.add(_minaDeHierro);
+    ApiModelo.addMinaDeHierro();
     return indice;
   }
 
@@ -319,6 +331,7 @@ class API {
     }
     if (encontrado==true) {
       Estructura.minasDeHierro.removeAt(indice);
+      ApiModelo.deleteMinaDeHierro();
       return 0;
     }
 

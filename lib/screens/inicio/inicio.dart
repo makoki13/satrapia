@@ -53,7 +53,7 @@ class InicioState extends State<Inicio> {
 
   nuevaPartida() {
     //onPressed: _isButtonDisabled ? null : _incrementCounter,
-    print("Boton nuevaPartida");
+    //print("Boton nuevaPartida");
     //Navigator.of(_ctx).pushReplacementNamed("/partida");
     //Navigator.pushNamed(context, "/partida");
     Navigator.push(
@@ -65,7 +65,7 @@ class InicioState extends State<Inicio> {
   }
 
   continuarPartida() {
-    print("Boton continuarPartida");
+    //print("Boton continuarPartida");
     //Navigator.of(_ctx).pushReplacementNamed("/partida");
     //Navigator.pushNamed(context, "/partida");
     Navigator.push(
@@ -193,12 +193,14 @@ class InicioState extends State<Inicio> {
     );
   }
 
+  /*
   _nuevaPartida(){
-    print("Boton partida");
+    //print("Boton partida");
     Navigator.of(_ctx).pushReplacementNamed("/partida");
   }
 
   _continuarPartida() {
-    Navigator.of(_ctx).pushReplacementNamed("/partida");
+    //Navigator.of(_ctx).pushReplacementNamed("/partida");
   }
+  */
 }
