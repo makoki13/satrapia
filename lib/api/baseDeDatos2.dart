@@ -34,7 +34,7 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "satrapia_006.db");
+    String path = join(documentsDirectory.path, "satrapia_007.db");
     return await openDatabase(path, version: 1, onOpen: (db) {
     }, onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE User(id INTEGER PRIMARY KEY, username TEXT, password TEXT)");
@@ -287,7 +287,9 @@ class DBProvider {
     TipoJugador _tipoJugador;
 
     var dbClient = await database;
-    var table = await dbClient.rawQuery("SELECT Usuario,Nombre,Tipo FROM Jugador WHERE ID=$id");
+    String sql = "SELECT Usuario,Nombre,Tipo FROM Jugador WHERE ID=$id";
+    var table = await dbClient.rawQuery(sql);
+    print ("SQL $sql : filas $table");
     print("Jugador: ${table.first}");
     int _usuario = table.first["usuario"];
     String _nombre = table.first["nombre"];

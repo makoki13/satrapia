@@ -47,7 +47,7 @@ class Estructura {
 class API {  
   static ModeloPrincipal _modelo;
 
-  static _generaRegistros(jugador) {
+  static Future<void> _generaRegistros(jugador) async {
     ApiModelo.generaRegistroDispatcher();
     Estructura._dispatcher = new Dispatcher();
 
@@ -124,9 +124,12 @@ class API {
   static void generaImperio(int jugador, Model modelo) {
     _modelo = modelo;
 
-    _generaRegistros(jugador);
-    Estructura._palacio.iniciaCenso();
-    Estructura._palacio.iniciaRecaudacion();
+    _generaRegistros(jugador).then( (nada) { 
+      Estructura._palacio.iniciaCenso();
+      Estructura._palacio.iniciaRecaudacion();
+
+      _pruebas();
+      });    
   }
 
   static void cargaImperio(int jugador, Model modelo) {

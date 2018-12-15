@@ -16,44 +16,33 @@ class Principal {
 
   Principal() {
     _modelo = ModeloPrincipal();
-
-    DBProvider.db.salvaPartidaNueva();
-
-    //API.generaImperio(0, _modelo);
-
-
-    print("Antes de cargaPrincipal");
-    cargaPrincipal().then( (valor) {
-      //_pruebas();
-    });
-    print("Despues de cargaPrincipal");
-
-
-
-  }
-
-  Future<void> cargaPrincipal() async {
-    print("Antes de API");
-    await API.cargaImperio(0, _modelo);
-    print("Despues de API");
   }
 
   static ModeloPrincipal getModelo() => _modelo;
 
-  Future<bool> _hayPartidaNueva() async {
+  /*
+  static Future<void> cargaPrincipal() async {
+    print("Antes de API");
+    await API.cargaImperio(0, _modelo);
+    print("Despues de API");
+  }
+  */
+  
+  static Future<bool> _hayPartidaNueva() async {
     bool _partidaNueva = await DBProvider.db.hayPartidaNueva();
     return _partidaNueva;
   }
 
-  Future<void> cargaPartida() async {
-    _hayPartidaNueva().then((resultado) async {
-      resultado = false;
+  static Future<void> cargaPartida() async {
+    _hayPartidaNueva().then((resultado) async {      
       if (resultado == false) {
+        print("CREA PARTIDA");
         DBProvider.db.salvaPartidaNueva();
         var res = await API.generaImperio(0, _modelo);
       }
       else {
-        API.cargaImperio(1, _modelo);
+        print("CARGA PARTIDA");
+        API.cargaImperio(0, _modelo);
       }
     });
   }

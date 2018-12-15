@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:satrapia/api/principal.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../../api/models.dart';
@@ -16,7 +17,34 @@ class PartidaHome extends StatelessWidget {
         title: Text(title),
       ),
 
-      body: Center(
+      body: futureWidget(),
+    );
+  }
+}
+
+
+Widget futureWidget() {
+  return new FutureBuilder<bool>(
+    future: getDataFB(),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {        
+        return widgetPrincipal();
+      } else if (snapshot.hasError) {        
+        return new Text("${snapshot.error}");
+      }
+      return new CircularProgressIndicator();
+     },
+  );
+}
+
+Future<bool> getDataFB() async {
+  await Principal.cargaPartida();
+
+  return true;
+}
+
+Widget widgetPrincipal() {
+  return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -29,17 +57,11 @@ class PartidaHome extends StatelessWidget {
             // rebuild any time the CounterModel changes (i.e. after we
             // `notifyListeners` in the Model).
             ScopedModelDescendant<ModeloPrincipal>(
-              builder: (context, child, model)  {
-                if (API != null)
+              builder: (context, child, model)  {                
                   return Text(
                       API.getOroActual().toString(),
                       style: Theme.of(context).textTheme.display1,
-                  );
-                else
-                  return Text(
-                    '',
-                    style: Theme.of(context).textTheme.display1,
-                  );
+                  );                
               }
             ),
             Text(
@@ -79,22 +101,7 @@ class PartidaHome extends StatelessWidget {
             ),
           ],
         ),
-      ),
-
-      // Use the ScopedModelDescendant again in order to use the increment
-      // method from the CounterModel
-      floatingActionButton: ScopedModelDescendant<ModeloPrincipal>(
-        builder: (context, child, model) => FloatingActionButton(
-          onPressed: ()
-          {
-            model.notifica();
-            //model.setCounterPoblacion(0);
-          },
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        ),
-      ),
-
-    );
-  }
+      );
 }
+
+
