@@ -43,6 +43,23 @@ class Granja extends Edificio {
     this.setStatus ('Sin envios actuales');
   }
 
+  Granja.fromDB (this.id, this._nombre, this._posicion, this._capital, this._disp, int filonCantidad, int topeAlmacen, int cantidadActual, int ratio,
+      int tamanyoCosecha, int frecuenciaCosecha)
+      :  super (id, _nombre, TipoEdificio.GRANJA, _posicion, Granja.costeConstruccion, Granja.tiempoContruccion) {
+    this._capital.addGranja(this);
+
+    this._filon = new Productor ( null, COMIDA, cantidadActual, filonCantidad, ratio);
+    this._almacen = new Almacen ( 67, 'Silo de comida', COMIDA, this._posicion, topeAlmacen);
+
+    _almacen.setCantidad(cantidadActual);
+
+    this._granjeros = new Extractor (this._filon, this._almacen, tamanyoCosecha);
+
+    this._disp.addTareaRepetitiva(extrae, frecuenciaCosecha);
+
+    this.setStatus ('Sin envios actuales');
+  }
+
   String toString() { return this._nombre;}
 
   extrae() {

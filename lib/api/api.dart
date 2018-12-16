@@ -116,7 +116,7 @@ class API {
 
     Estructura._centroDeInvestigacion = await ApiModelo.getCentroDeInvestigacion(Estructura._capital, Estructura._dispatcher);
 
-    Estructura.granjas = ApiModelo.getGranjas();
+    Estructura.granjas = await ApiModelo.getGranjas(Estructura._capital, Estructura._dispatcher);
     Estructura.serrerias = ApiModelo.getSerrerias();
     Estructura.canteras = ApiModelo.getCanteras();
     Estructura.minasDeHierro = ApiModelo.getMinasDeHierro();
@@ -201,32 +201,35 @@ class API {
   }
 
   static void setStockComida() {
-    ApiModelo.setComida(API.setStockComida());
+    int _comidaActual = API.getStockComida();
+    ApiModelo.setComida(_comidaActual);
     _modelo.notifica();
   }
 
   static void setStockMadera() {
-    ApiModelo.setMadera(API.setStockMadera());
+    ApiModelo.setMadera(API.getStockMadera());
     _modelo.notifica();
   }
 
   static void setStockPiedra() {
-    ApiModelo.setPiedra(API.setStockPiedra());
+    ApiModelo.setPiedra(API.getStockPiedra());
     _modelo.notifica();
   }
 
   static void setStockHierro() {
-    ApiModelo.setHierro(API.setStockHierro());
+    ApiModelo.setHierro(API.getStockHierro());
     _modelo.notifica();
   }
 
   /* GRANJAS */
   static int creaGranja(Punto posicion) {
     int indice = Estructura.granjas.length + 1;
-    Granja _granja = new Granja(indice, 'Granja de Makoki $indice', posicion, Estructura._capital, Estructura._dispatcher);
+    String nombre = 'Granja de Makoki $indice';
+    Granja _granja = new Granja(indice, nombre, posicion, Estructura._capital, Estructura._dispatcher);
     Estructura.granjas.add(_granja);
 
-    ApiModelo.addGranja();
+    ApiModelo.addGranja(indice, nombre, Estructura._capital, posicion, Parametros.Granja_Productor_CantidadInicial, Parametros.Granja_Almacen_Capacidad,
+        0, 100, Parametros.Granja_Cosecha_Tamanyo, Granja.cosechaFrecuencia, Estructura._capital.getProvincia().getJugador());
 
     return indice;
   }

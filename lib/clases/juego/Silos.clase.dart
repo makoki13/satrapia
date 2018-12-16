@@ -59,7 +59,7 @@ class Silos extends Edificio {
     return al;
   }
 
-  void EnviadoRecursos(Recurso recurso) {
+  void enviadoRecursos(Recurso recurso) {
     if (recurso==COMIDA) { API.setStockComida();}
     if (recurso==MADERA) { API.setStockMadera();}
     if (recurso==PIEDRA) { API.setStockPiedra();}

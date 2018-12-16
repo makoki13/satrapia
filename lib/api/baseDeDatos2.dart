@@ -1,15 +1,19 @@
 import 'package:path/path.dart';
 import 'package:satrapia/clases/juego/Almacen.clase.dart';
+import 'package:satrapia/clases/juego/Cantera.clase.dart';
 import 'package:satrapia/clases/juego/Capital.clase.dart';
 import 'package:satrapia/clases/juego/CentroDeInvestigacion.clase.dart';
 import 'package:satrapia/clases/juego/Cuartel.clase.dart';
 import 'package:satrapia/clases/juego/Dispatcher.clase.dart';
+import 'package:satrapia/clases/juego/Granja.clase.dart';
 import 'package:satrapia/clases/juego/Imperio.clase.dart';
 import 'package:satrapia/clases/juego/Jugador.clase.dart';
+import 'package:satrapia/clases/juego/Mina.clase.dart';
 import 'package:satrapia/clases/juego/Palacio.clase.dart';
 import 'package:satrapia/clases/juego/Parametros.clase.dart';
 import 'package:satrapia/clases/juego/Punto.clase.dart';
 import 'package:satrapia/clases/juego/Recurso.clase.dart';
+import 'package:satrapia/clases/juego/Serreria.clase.dart';
 import 'package:satrapia/clases/juego/Silos.clase.dart';
 import 'dart:io';
 import 'package:sqflite/sqflite.dart';
@@ -19,6 +23,7 @@ import '../clases/tools/usuario.dart';
 
 class DBProvider {
   DBProvider._();
+
   static final DBProvider db = DBProvider._();
 
   static Database _database;
@@ -34,20 +39,28 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "satrapia_007.db");
-    return await openDatabase(path, version: 1, onOpen: (db) {
-    }, onCreate: (Database db, int version) async {
-      await db.execute("CREATE TABLE User(id INTEGER PRIMARY KEY, username TEXT, password TEXT)");
-      await db.execute("CREATE TABLE Parametros(codigo TEXT, valor TEXT)");
+    String path = join(documentsDirectory.path, "satrapia_008.db");
+    return await openDatabase(path, version: 1,
+        onOpen: (db) {},
+        onCreate: (Database db, int version) async {
+          await db.execute(
+              "CREATE TABLE User(id INTEGER PRIMARY KEY, username TEXT, password TEXT)");
+          await db.execute("CREATE TABLE Parametros(codigo TEXT, valor TEXT)");
 
-      await db.execute("CREATE TABLE Dispatcher(codigo INTEGER PRIMARY KEY, valor TEXT)");
-      await db.execute("CREATE TABLE Jugador(id INTEGER PRIMARY KEY, usuario INTEGER, nombre TEXT, tipo INTEGER)");
-      /* Tipo: 1: Imperio 2: Tribu */
-      await db.execute("CREATE TABLE Imperio(id INTEGER PRIMARY KEY, jugador INTEGER, nombre TEXT, tipo INTEGER)");
-      await db.execute("CREATE TABLE Provincia(id INTEGER PRIMARY KEY, jugador INTEGER, nombre TEXT, tribu INTEGER, satrapia INTEGER)");
-      await db.execute("CREATE TABLE Ciudad(id INTEGER PRIMARY KEY, nombre TEXT, provincia INTEGER, x INTEGER, y INTEGER, z INTEGER, esCapital INTEGER)");
-      await db.execute("CREATE TABLE Palacio(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER, oro INTEGER, poblacion INTEGER)");
-      await db.execute("""
+          await db.execute(
+              "CREATE TABLE Dispatcher(codigo INTEGER PRIMARY KEY, valor TEXT)");
+          await db.execute(
+              "CREATE TABLE Jugador(id INTEGER PRIMARY KEY, usuario INTEGER, nombre TEXT, tipo INTEGER)");
+          /* Tipo: 1: Imperio 2: Tribu */
+          await db.execute(
+              "CREATE TABLE Imperio(id INTEGER PRIMARY KEY, jugador INTEGER, nombre TEXT, tipo INTEGER)");
+          await db.execute(
+              "CREATE TABLE Provincia(id INTEGER PRIMARY KEY, jugador INTEGER, nombre TEXT, tribu INTEGER, satrapia INTEGER)");
+          await db.execute(
+              "CREATE TABLE Ciudad(id INTEGER PRIMARY KEY, nombre TEXT, provincia INTEGER, x INTEGER, y INTEGER, z INTEGER, esCapital INTEGER)");
+          await db.execute(
+              "CREATE TABLE Palacio(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER, oro INTEGER, poblacion INTEGER)");
+          await db.execute("""
         CREATE TABLE Silos(
           id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER, 
           comida_stock INTEGER, comida_capacidad INTEGER, 
@@ -56,10 +69,37 @@ class DBProvider {
           hierro_stock INTEGER, hierro_capacidad INTEGER
         )
       """);
-      await db.execute("CREATE TABLE Cuartel(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER)");
-      await db.execute("CREATE TABLE CentroDeInvestigacion(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER)");
+          await db.execute(
+              "CREATE TABLE Cuartel(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER)");
+          await db.execute(
+              "CREATE TABLE CentroDeInvestigacion(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER)");
 
-    });
+          await db.execute("""
+              CREATE TABLE Granja(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
+                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad) )
+          """);
+          await db.execute("""
+              CREATE TABLE Serreria(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
+                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad))
+          """);
+          await db.execute("""
+              CREATE TABLE Cantera(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
+                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad))
+          """);
+          await db.execute("""
+              CREATE TABLE Mina_Hierro(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
+                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad))
+          """);
+          await db.execute("""
+              CREATE TABLE Mina_Oro(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
+                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad))
+          """);
+        });
   }
 
   Future<int> saveUser(Usuario user) async {
@@ -78,7 +118,7 @@ class DBProvider {
   Future<bool> isLoggedIn() async {
     var dbClient = await database;
     var res = await dbClient.query("User");
-    return res.length > 0? true: false;
+    return res.length > 0 ? true : false;
   }
 
   Future<String> usuario() async {
@@ -109,7 +149,7 @@ class DBProvider {
       columns: ["valor"], //["title"],
       where: "codigo = 'tutorial'",
     );
-    return res.length > 0? true: false;
+    return res.length > 0 ? true : false;
   }
 
   Future<int> deleteTutorial() async {
@@ -123,22 +163,25 @@ class DBProvider {
   }
 
   /** Partida nueva
-  *
-  */
+   *
+   */
   Future<int> salvaPartidaNueva() async {
     var dbClient = await database;
-    var res = await dbClient.rawInsert("INSERT Into Parametros (codigo,valor) VALUES ('Partida Nueva', 1)");
+    var res = await dbClient.rawInsert(
+        "INSERT Into Parametros (codigo,valor) VALUES ('Partida Nueva', 1)");
     return res;
   }
 
   Future<int> deletePartidaNueva() async {
     var dbClient = await database;
-    return dbClient.rawDelete("Delete from Parametros WHERE Codigo='Partida Nueva'");
+    return dbClient.rawDelete(
+        "Delete from Parametros WHERE Codigo='Partida Nueva'");
   }
 
   Future<bool> hayPartidaNueva() async {
     var dbClient = await database;
-    var table = await dbClient.rawQuery("SELECT COUNT(*) FROM Parametros WHERE Codigo='Partida Nueva'");
+    var table = await dbClient.rawQuery(
+        "SELECT COUNT(*) FROM Parametros WHERE Codigo='Partida Nueva'");
     int resultado = Sqflite.firstIntValue(table);
     print("Resultado: $resultado");
     return (resultado > 0);
@@ -152,7 +195,8 @@ class DBProvider {
 
   Future<int> insertaDispatcher(int i, String s) async {
     var dbClient = await database;
-    var res = await dbClient.rawInsert("INSERT Into Dispatcher (codigo,valor) VALUES ($i, '$s')");
+    var res = await dbClient.rawInsert(
+        "INSERT Into Dispatcher (codigo,valor) VALUES ($i, '$s')");
     return res;
   }
 
@@ -163,124 +207,14 @@ class DBProvider {
     return dbClient.rawDelete("Delete from Jugador");
   }
 
-  Future<int> insertaJugador(Jugador jugador, int i, String s, TipoJugador emperador) async {
+  Future<int> insertaJugador(Jugador jugador, int i, String s,
+      TipoJugador emperador) async {
     var dbClient = await database;
-    var res = await dbClient.rawInsert("INSERT Into Jugador (id, usuario, nombre, tipo) VALUES (${jugador.getID()}, $i, '$s', ${emperador.index})");
+    var res = await dbClient.rawInsert(
+        "INSERT Into Jugador (id, usuario, nombre, tipo) VALUES (${jugador
+            .getID()}, $i, '$s', ${emperador.index})");
     return res;
   }
-
-  /* Imperio */
-
-  Future<int> borraImperio() async {
-    var dbClient = await database;
-    return dbClient.rawDelete("Delete from Imperio");
-  }
-
-  Future<int> insertaImperio(int i, String s, Jugador jugador, bool param3) async {
-    var dbClient = await database;
-
-    int tipo = 0; if (param3==true) tipo = 1;
-
-    var res = await dbClient.rawInsert("INSERT Into Imperio (id, jugador, nombre, tipo) VALUES ($i, ${jugador.getID()}, '$s', $tipo)");
-    return res;
-  }
-
-  /* Provincia */
-
-  Future<int> borraProvincia() async {
-    var dbClient = await database;
-    return dbClient.rawDelete("Delete from Provincia");
-  }
-
-  Future<int> insertaProvincia(int i, String s, Jugador jugador, bool param3, bool param4) async {
-    var dbClient = await database;
-
-    int tribu = 0; if (param3==true) tribu = 1;
-    int satrapia = 0; if (param4==true) satrapia = 1;
-
-    var res = await dbClient.rawInsert("INSERT Into Provincia (id, jugador, nombre, tribu, satrapia) VALUES ($i, ${jugador.getID()}, '$s', $tribu, $satrapia)");
-    return res;
-  }
-
-  /* Ciudad */
-
-  Future<int> borraCiudad() async {
-    var dbClient = await database;
-    return dbClient.rawDelete("Delete from Ciudad");
-  }
-
-  Future<int> insertaCiudad(int i, String s, Provincia provincia, Punto posicion, esCapital) async {
-    var dbClient = await database;
-
-    int _esCapital = 0; if (esCapital==true) _esCapital = 1;
-
-    var res = await dbClient.rawInsert("""
-      INSERT Into Ciudad (id, nombre, provincia, x, y, z, esCapital) VALUES ($i, '$s', ${provincia.getID()}, ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $_esCapital )
-      """);
-    return res;
-  }
-
-  /* Palacio */
-
-  Future<int> borraPalacio() async {
-    var dbClient = await database;
-    return dbClient.rawDelete("Delete from Palacio");
-  }
-
-  Future<int> insertaPalacio(int i, String s, Capital capital) async {
-    var dbClient = await database;
-    var res = await dbClient.rawInsert("INSERT Into Palacio (id, nombre, capital, oro, poblacion) VALUES ($i, '$s', ${capital.getID()}, ${Parametros.oroInicial}, 0)");
-    return res;
-  }
-
-  /* Silos */
-
-  Future<int> borraSilos() async {
-    var dbClient = await database;
-    return dbClient.rawDelete("Delete from Silos");
-  }
-
-  Future<int> insertaSilos(int i, String s, Capital capital, int comidaStock, num comidaCapacidad, int maderaStock, num maderaCapacidad, int piedraStock, num piedraCapacidad,
-      int hierroStock, num hierroCapacidad) async {
-    var dbClient = await database;
-    var res = await dbClient.rawInsert("""
-      INSERT Into Silos (id, nombre, capital, comida_stock, comida_capacidad, madera_stock, madera_capacidad, piedra_stock, piedra_capacidad, hierro_stock, hierro_capacidad) 
-      VALUES ($i, '$s', ${capital.getID()}, $comidaStock, $comidaCapacidad, $maderaStock, $maderaCapacidad, $piedraStock, $piedraCapacidad, $hierroStock, $hierroCapacidad)
-      """);
-    return res;
-  }
-
-  /* Cuartel */
-  Future<int> borraCuartel() async {
-    var dbClient = await database;
-    return dbClient.rawDelete("Delete from Cuartel");
-  }
-
-  Future<int> insertaCuartel(int i, String s, Capital capital) async {
-    var dbClient = await database;
-    var res = await dbClient.rawInsert("INSERT Into Cuartel (id, nombre, capital) VALUES ($i, '$s', ${capital.getID()})");
-    return res;
-  }
-
-  /* Centro de investigación */
-
-  Future<int> borraCentroDeInvestigacion() async {
-    var dbClient = await database;
-    return dbClient.rawDelete("Delete from CentroDeInvestigacion");
-  }
-
-  Future<int> insertaCentroDeInvestigacion(int i, String s, Capital capital) async {
-    var dbClient = await database;
-    var res = await dbClient.rawInsert("INSERT Into CentroDeInvestigacion (id, nombre, capital) VALUES ($i, '$s', ${capital.getID()})");
-    return res;
-  }
-
-
-
-
-
-
-
 
   /* CREATE TABLE Jugador(id INTEGER PRIMARY KEY, usuario INTEGER, nombre TEXT, tipo INTEGER) */
   Future<Jugador> getJugador(int id) async {
@@ -289,12 +223,12 @@ class DBProvider {
     var dbClient = await database;
     String sql = "SELECT Usuario,Nombre,Tipo FROM Jugador WHERE ID=$id";
     var table = await dbClient.rawQuery(sql);
-    print ("SQL $sql : filas $table");
+    print("SQL $sql : filas $table");
     print("Jugador: ${table.first}");
     int _usuario = table.first["usuario"];
     String _nombre = table.first["nombre"];
     int _tipo = table.first["tipo"];
-    switch(_tipo) {
+    switch (_tipo) {
       case 0:
         _tipoJugador = TipoJugador.SIN_JUEGO;
         break;
@@ -314,41 +248,116 @@ class DBProvider {
     return _jugador;
   }
 
+  /* Imperio */
+
+  Future<int> borraImperio() async {
+    var dbClient = await database;
+    return dbClient.rawDelete("Delete from Imperio");
+  }
+
+  Future<int> insertaImperio(int i, String s, Jugador jugador,
+      bool param3) async {
+    var dbClient = await database;
+
+    int tipo = 0;
+    if (param3 == true) tipo = 1;
+
+    var res = await dbClient.rawInsert(
+        "INSERT Into Imperio (id, jugador, nombre, tipo) VALUES ($i, ${jugador
+            .getID()}, '$s', $tipo)");
+    return res;
+  }
+
   /* CREATE TABLE Imperio(id INTEGER PRIMARY KEY, jugador INTEGER, nombre TEXT, tipo INTEGER) */
   Future<Imperio> getImperio(Jugador jugador) async {
     var dbClient = await database;
-    var table = await dbClient.rawQuery("SELECT Id,Nombre,Tipo FROM Imperio WHERE Jugador=${jugador.getID()}");
+    var table = await dbClient.rawQuery(
+        "SELECT Id,Nombre,Tipo FROM Imperio WHERE Jugador=${jugador.getID()}");
     print("Imperio: ${table.first}");
     int _id = table.first["id"];
     String _nombre = table.first["nombre"];
-    int _tipo = table.first["tipo"]; bool _esTribu = false; if (_tipo==1) _esTribu = true;
+    int _tipo = table.first["tipo"];
+    bool _esTribu = false;
+    if (_tipo == 1) _esTribu = true;
 
     Imperio _imperio = Imperio(_id, _nombre, jugador, _esTribu);
     return _imperio;
+  }
+
+  /* Provincia */
+
+  Future<int> borraProvincia() async {
+    var dbClient = await database;
+    return dbClient.rawDelete("Delete from Provincia");
+  }
+
+  Future<int> insertaProvincia(int i, String s, Jugador jugador, bool param3,
+      bool param4) async {
+    var dbClient = await database;
+
+    int tribu = 0;
+    if (param3 == true) tribu = 1;
+    int satrapia = 0;
+    if (param4 == true) satrapia = 1;
+
+    var res = await dbClient.rawInsert(
+        "INSERT Into Provincia (id, jugador, nombre, tribu, satrapia) VALUES ($i, ${jugador
+            .getID()}, '$s', $tribu, $satrapia)");
+    return res;
   }
 
   /* CREATE TABLE Provincia(id INTEGER PRIMARY KEY, jugador INTEGER, nombre TEXT, tribu INTEGER, satrapia INTEGER) */
   Future<Provincia> getProvincia(Jugador jugador) async {
     var dbClient = await database;
 
-    String _sql="SELECT Id,Nombre,Tribu,Satrapia FROM Provincia WHERE jugador=${jugador.getID()}";
+    String _sql = "SELECT Id,Nombre,Tribu,Satrapia FROM Provincia WHERE jugador=${jugador
+        .getID()}";
 
     var table = await dbClient.rawQuery(_sql);
     print("Provincia: ${table.first}");
     int _id = table.first["id"];
     String _nombre = table.first["nombre"];
-    int _tribu = table.first["tribu"]; bool _esTribu = false; if (_tribu==1) _esTribu = true;
-    int _satrapia = table.first["satrapia"]; bool _esSatrapia = false; if (_satrapia==1) _esSatrapia = true;
+    int _tribu = table.first["tribu"];
+    bool _esTribu = false;
+    if (_tribu == 1) _esTribu = true;
+    int _satrapia = table.first["satrapia"];
+    bool _esSatrapia = false;
+    if (_satrapia == 1) _esSatrapia = true;
 
-    Provincia _provincia = Provincia(_id, _nombre, jugador, _esTribu, _esSatrapia);
+    Provincia _provincia = Provincia(
+        _id, _nombre, jugador, _esTribu, _esSatrapia);
     return _provincia;
+  }
+
+  /* Ciudad */
+
+  Future<int> borraCiudad() async {
+    var dbClient = await database;
+    return dbClient.rawDelete("Delete from Ciudad");
+  }
+
+  Future<int> insertaCiudad(int i, String s, Provincia provincia,
+      Punto posicion, esCapital) async {
+    var dbClient = await database;
+
+    int _esCapital = 0;
+    if (esCapital == true) _esCapital = 1;
+
+    var res = await dbClient.rawInsert("""
+      INSERT Into Ciudad (id, nombre, provincia, x, y, z, esCapital) VALUES ($i, '$s', ${provincia
+        .getID()}, ${posicion.getX()}, ${posicion.getY()}, ${posicion
+        .getZ()}, $_esCapital )
+      """);
+    return res;
   }
 
   /* CREATE TABLE Ciudad(id INTEGER PRIMARY KEY, nombre TEXT, provincia INTEGER, x INTEGER, y INTEGER, z INTEGER, esCapital INTEGER) */
   Future<Capital> getCapital(Provincia provincia) async {
     var dbClient = await database;
 
-    var table = await dbClient.rawQuery("SELECT id,nombre,x,y,z FROM Ciudad WHERE Provincia=${provincia.getID()} AND esCapital=1");
+    var table = await dbClient.rawQuery(
+        "SELECT id,nombre,x,y,z FROM Ciudad WHERE Provincia=${provincia
+            .getID()} AND esCapital=1");
     print("Capital: ${table.first}");
     int _id = table.first["id"];
     String _nombre = table.first["nombre"];
@@ -356,16 +365,33 @@ class DBProvider {
     int _y = table.first["y"];
     int _z = table.first["z"];
 
-    Punto _posicion = Punto (_x, _y, _z);
+    Punto _posicion = Punto(_x, _y, _z);
 
     Capital _capital = Capital(_id, _nombre, provincia, _posicion);
     return _capital;
   }
 
+  /* Palacio */
+
+  Future<int> borraPalacio() async {
+    var dbClient = await database;
+    return dbClient.rawDelete("Delete from Palacio");
+  }
+
+  Future<int> insertaPalacio(int i, String s, Capital capital) async {
+    var dbClient = await database;
+    var res = await dbClient.rawInsert(
+        "INSERT Into Palacio (id, nombre, capital, oro, poblacion) VALUES ($i, '$s', ${capital
+            .getID()}, ${Parametros.oroInicial}, 0)");
+    return res;
+  }
+
   /* CREATE TABLE Palacio(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER, oro INTEGER, poblacion INTEGER) */
   Future<Palacio> getPalacio(Capital capital, Dispatcher dispatcher) async {
     var dbClient = await database;
-    var table = await dbClient.rawQuery("SELECT Id,Nombre,oro,poblacion FROM Palacio WHERE Capital=${capital.getID()}");
+    var table = await dbClient.rawQuery(
+        "SELECT Id,Nombre,oro,poblacion FROM Palacio WHERE Capital=${capital
+            .getID()}");
     print("Palacio: ${table.first}");
     int _id = table.first["id"];
     String _nombre = table.first["nombre"];
@@ -376,6 +402,56 @@ class DBProvider {
     _palacio.setOro(_oro);
     _palacio.setPoblacion(_poblacion);
     return _palacio;
+  }
+
+  Future<int> setOro(int oroActual) async {
+    var dbClient = await database;
+    return dbClient.rawUpdate("UPDATE Palacio SET Oro = $oroActual");
+  }
+
+  Future<int> setPoblacion(int poblacionActual) async {
+    var dbClient = await database;
+    return dbClient.rawUpdate("UPDATE Palacio SET poblacion = $poblacionActual");
+  }
+
+  /* Silos */
+
+  Future<int> borraSilos() async {
+    var dbClient = await database;
+    return dbClient.rawDelete("Delete from Silos");
+  }
+
+  Future<int> insertaSilos(int i, String s, Capital capital, int comidaStock,
+      num comidaCapacidad, int maderaStock, num maderaCapacidad,
+      int piedraStock, num piedraCapacidad,
+      int hierroStock, num hierroCapacidad) async {
+    var dbClient = await database;
+    var res = await dbClient.rawInsert("""
+      INSERT Into Silos (id, nombre, capital, comida_stock, comida_capacidad, madera_stock, madera_capacidad, piedra_stock, piedra_capacidad, hierro_stock, hierro_capacidad) 
+      VALUES ($i, '$s', ${capital
+        .getID()}, $comidaStock, $comidaCapacidad, $maderaStock, $maderaCapacidad, $piedraStock, $piedraCapacidad, $hierroStock, $hierroCapacidad)
+      """);
+    return res;
+  }
+
+  Future<int> setComida(int comida) async {
+    var dbClient = await database;
+    return dbClient.rawUpdate("UPDATE Silos SET comida_stock = $comida");
+  }
+
+  Future<int> setMadera(int madera) async {
+    var dbClient = await database;
+    return dbClient.rawUpdate("UPDATE Silos SET madera_stock = $madera");
+  }
+
+  Future<int> setPiedra(int piedra) async {
+    var dbClient = await database;
+    return dbClient.rawUpdate("UPDATE Silos SET piedra_stock = $piedra");
+  }
+
+  Future<int> setHierro(int hierro) async {
+    var dbClient = await database;
+    return dbClient.rawUpdate("UPDATE Silos SET hierro_stock = $hierro");
   }
 
   /*
@@ -406,29 +482,48 @@ class DBProvider {
 
     Silos _silos = Silos(_id, _nombre, capital, dispatcher);
 
-    Almacen _almacenComida = Almacen(1,'Almacen de Comida',COMIDA, _silos.getPosicion(), _comidaCapacidad);
+    Almacen _almacenComida = Almacen(
+        1, 'Almacen de Comida', COMIDA, _silos.getPosicion(), _comidaCapacidad);
     _almacenComida.addCantidad(_comidaStock);
     _silos.addAlmacen(_almacenComida);
 
-    Almacen _almacenMadera = Almacen(2,'Almacen de Madera',MADERA, _silos.getPosicion(), _maderaCapacidad);
+    Almacen _almacenMadera = Almacen(
+        2, 'Almacen de Madera', MADERA, _silos.getPosicion(), _maderaCapacidad);
     _almacenMadera.addCantidad(_maderaStock);
     _silos.addAlmacen(_almacenMadera);
 
-    Almacen _almacenPiedra = Almacen(3,'Almacen de Piedra',PIEDRA, _silos.getPosicion(), _piedraCapacidad);
+    Almacen _almacenPiedra = Almacen(
+        3, 'Almacen de Piedra', PIEDRA, _silos.getPosicion(), _piedraCapacidad);
     _almacenPiedra.addCantidad(_piedraStock);
     _silos.addAlmacen(_almacenPiedra);
 
-    Almacen _almacenHierro = Almacen(4,'Almacen de Hierro',HIERRO, _silos.getPosicion(), _hierroCapacidad);
+    Almacen _almacenHierro = Almacen(
+        4, 'Almacen de Hierro', HIERRO, _silos.getPosicion(), _hierroCapacidad);
     _almacenHierro.addCantidad(_hierroStock);
     _silos.addAlmacen(_almacenHierro);
 
     return _silos;
   }
 
+  /* Cuartel */
+  Future<int> borraCuartel() async {
+    var dbClient = await database;
+    return dbClient.rawDelete("Delete from Cuartel");
+  }
+
+  Future<int> insertaCuartel(int i, String s, Capital capital) async {
+    var dbClient = await database;
+    var res = await dbClient.rawInsert(
+        "INSERT Into Cuartel (id, nombre, capital) VALUES ($i, '$s', ${capital
+            .getID()})");
+    return res;
+  }
+
   /* CREATE TABLE Cuartel(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER) */
   Future<Cuartel> getCuartel(Capital capital, Dispatcher dispatcher) async {
     var dbClient = await database;
-    var table = await dbClient.rawQuery("SELECT Id,Nombre FROM Cuartel WHERE Capital=${capital.getID()}");
+    var table = await dbClient.rawQuery(
+        "SELECT Id,Nombre FROM Cuartel WHERE Capital=${capital.getID()}");
     print("Cuartel: ${table.first}");
     int _id = table.first["Id"];
     String _nombre = table.first["Nombre"];
@@ -437,20 +532,210 @@ class DBProvider {
     return _cuartel;
   }
 
-  /* CREATE TABLE CentroDeInvestigacion(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER) */
-  Future<CentroDeInvestigacion> getCentroDeInvestigacion(Capital capital, Dispatcher dispatcher) async {
+  /* Centro de investigación */
+
+  Future<int> borraCentroDeInvestigacion() async {
     var dbClient = await database;
-    var table = await dbClient.rawQuery("SELECT Id,Nombre FROM CentroDeInvestigacion WHERE Capital=${capital.getID()}");
+    return dbClient.rawDelete("Delete from CentroDeInvestigacion");
+  }
+
+  Future<int> insertaCentroDeInvestigacion(int i, String s,
+      Capital capital) async {
+    var dbClient = await database;
+    var res = await dbClient.rawInsert(
+        "INSERT Into CentroDeInvestigacion (id, nombre, capital) VALUES ($i, '$s', ${capital
+            .getID()})");
+    return res;
+  }
+
+  /* CREATE TABLE CentroDeInvestigacion(id INTEGER PRIMARY KEY, nombre TEXT, capital INTEGER) */
+  Future<CentroDeInvestigacion> getCentroDeInvestigacion(Capital capital,
+      Dispatcher dispatcher) async {
+    var dbClient = await database;
+    var table = await dbClient.rawQuery(
+        "SELECT Id,Nombre FROM CentroDeInvestigacion WHERE Capital=${capital
+            .getID()}");
     print("Centro de Investigacion: ${table.first}");
     int _id = table.first["Id"];
     String _nombre = table.first["Nombre"];
 
-    CentroDeInvestigacion _centroDeInvestigacion = CentroDeInvestigacion(_id, _nombre, capital, dispatcher);
+    CentroDeInvestigacion _centroDeInvestigacion = CentroDeInvestigacion(
+        _id, _nombre, capital, dispatcher);
     return _centroDeInvestigacion;
   }
 
-  Future<int> setOro(int oroActual) async {
+  /* Granja */
+  /*
+  CREATE TABLE Granja(id INTEGER PRIMARY KEY, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER,
+  cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+  tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER)
+  */
+
+  Future<int> insertaGranja(int i, String s, Capital capital, Punto posicion, int cantidad_filon, int cantidad_tope_almacen, int cantidad_actual_almacen, int ratio,
+      int tamanyo_cosecha, int frecuencia_cosecha, Jugador propietario) async {
     var dbClient = await database;
-    return dbClient.rawUpdate("UPDATE Palacio SET Oro = $oroActual");
+    var res = await dbClient.rawInsert("""
+      INSERT Into Granja (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
+      VALUES (
+        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_filon, $cantidad_tope_almacen, $cantidad_actual_almacen,
+        $ratio, $tamanyo_cosecha, $frecuencia_cosecha, ${propietario.getID()}
+      )
+    """);
+    return res;
   }
+
+  Future<List<Granja>> getGranjas(Capital capital, Dispatcher disp) async {
+    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
+
+    List<Granja> _lista = List<Granja>();
+
+    var dbClient = await database;
+    var table = await dbClient.rawQuery("""
+        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
+        FROM Granja WHERE Ciudad=${capital.getID()}
+    """);
+    table.forEach( (registro) {
+      _id = registro["id"];
+      _nombre = registro["nombre"];
+      _posicion = Punto(registro["x"], registro["y"], registro["z"] );
+      _filonCantidad = registro["cantidad_filon"];
+      _topeAlmacen = registro["cantidad_tope_almacen"];
+      _cantidadActual = registro["cantidad_actual_almacen"];
+      _ratio = registro["ratio"];
+      _tamanyocosecha = registro["tamanyo_cosecha"];
+      _frecuenciaCosecha = registro["frecuencia_cosecha"];
+
+      Granja _granja = Granja.fromDB(_id, _nombre, _posicion, capital, disp, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio, _tamanyocosecha, _frecuenciaCosecha);
+      _lista.add(_granja);
+    });
+
+    return _lista;
+  }
+
+  /** Serreria */
+  Future<int> insertaSerreria(int i, String s, Capital capital, Punto posicion, int cantidad_filon, int cantidad_tope_almacen, int cantidad_actual_almacen, int ratio,
+      int tamanyo_cosecha, int frecuencia_cosecha, Jugador propietario) async {
+    var dbClient = await database;
+    var res = await dbClient.rawInsert("""
+      INSERT Into Serreria (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
+      VALUES (
+        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_filon, $cantidad_tope_almacen, $cantidad_actual_almacen,
+        $ratio, $tamanyo_cosecha, $frecuencia_cosecha, ${propietario.getID()}
+      )
+    """);
+    return res;
+  }
+
+  Future<List<Serreria>> getSerreria(Capital capital, Dispatcher disp) async {
+    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
+
+    List<Serreria> _lista = List<Serreria>();
+
+    var dbClient = await database;
+    var table = await dbClient.rawQuery("""
+        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
+        FROM Serreria WHERE Ciudad=${capital.getID()}
+    """);
+    table.forEach( (registro) {
+      _id = registro["id"];
+      _nombre = registro["nombre"];
+      _posicion = Punto(registro["x"], registro["y"], registro["z"] );
+      _filonCantidad = registro["cantidad_filon"];
+      _topeAlmacen = registro["cantidad_tope_almacen"];
+      _cantidadActual = registro["cantidad_actual_almacen"];
+      _ratio = registro["ratio"];
+      _tamanyocosecha = registro["tamanyo_cosecha"];
+      _frecuenciaCosecha = registro["frecuencia_cosecha"];
+
+      Serreria _serreria = Serreria.fromDB(_id, _nombre, _posicion, capital, disp, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio, _tamanyocosecha, _frecuenciaCosecha);
+      _lista.add(_serreria);
+    });
+
+    return _lista;
+  }
+
+  /** Cantera */
+  Future<int> insertaCantera(int i, String s, Capital capital, Punto posicion, int cantidad_filon, int cantidad_tope_almacen, int cantidad_actual_almacen, int ratio,
+      int tamanyo_cosecha, int frecuencia_cosecha, Jugador propietario) async {
+    var dbClient = await database;
+    var res = await dbClient.rawInsert("""
+      INSERT Into Cantera (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
+      VALUES (
+        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_filon, $cantidad_tope_almacen, $cantidad_actual_almacen,
+        $ratio, $tamanyo_cosecha, $frecuencia_cosecha, ${propietario.getID()}
+      )
+    """);
+    return res;
+  }
+
+  Future<List<Cantera>> getCantera(Capital capital, Dispatcher disp) async {
+    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
+
+    List<Cantera> _lista = List<Cantera>();
+
+    var dbClient = await database;
+    var table = await dbClient.rawQuery("""
+        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
+        FROM Cantera WHERE Ciudad=${capital.getID()}
+    """);
+    table.forEach( (registro) {
+      _id = registro["id"];
+      _nombre = registro["nombre"];
+      _posicion = Punto(registro["x"], registro["y"], registro["z"] );
+      _filonCantidad = registro["cantidad_filon"];
+      _topeAlmacen = registro["cantidad_tope_almacen"];
+      _cantidadActual = registro["cantidad_actual_almacen"];
+      _ratio = registro["ratio"];
+      _tamanyocosecha = registro["tamanyo_cosecha"];
+      _frecuenciaCosecha = registro["frecuencia_cosecha"];
+
+      Cantera _cantera = Cantera.fromDB(_id, _nombre, _posicion, capital, disp, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio, _tamanyocosecha, _frecuenciaCosecha);
+      _lista.add(_cantera);
+    });
+
+    return _lista;
+  }
+
+  /** Mina de Hierro */
+  Future<int> insertaMinaDeHierro(int i, String s, Capital capital, Punto posicion, int cantidad_filon, int cantidad_tope_almacen, int cantidad_actual_almacen, int ratio,
+      int tamanyo_cosecha, int frecuencia_cosecha, Jugador propietario) async {
+    var dbClient = await database;
+    var res = await dbClient.rawInsert("""
+      INSERT Into Mina_Hierro (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
+      VALUES (
+        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_filon, $cantidad_tope_almacen, $cantidad_actual_almacen,
+        $ratio, $tamanyo_cosecha, $frecuencia_cosecha, ${propietario.getID()}
+      )
+    """);
+    return res;
+  }
+
+  Future<List<MinaDeHierro>> getMinaDeHierro(Capital capital, Dispatcher disp) async {
+    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
+
+    List<MinaDeHierro> _lista = List<MinaDeHierro>();
+
+    var dbClient = await database;
+    var table = await dbClient.rawQuery("""
+        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
+        FROM Mina_Hierro WHERE Ciudad=${capital.getID()}
+    """);
+    table.forEach( (registro) {
+      _id = registro["id"];
+      _nombre = registro["nombre"];
+      _posicion = Punto(registro["x"], registro["y"], registro["z"] );
+      _filonCantidad = registro["cantidad_filon"];
+      _topeAlmacen = registro["cantidad_tope_almacen"];
+      _cantidadActual = registro["cantidad_actual_almacen"];
+      _ratio = registro["ratio"];
+      _tamanyocosecha = registro["tamanyo_cosecha"];
+      _frecuenciaCosecha = registro["frecuencia_cosecha"];
+
+      MinaDeHierro _mina = MinaDeHierro.fromDB(_id, _nombre, _posicion, capital, disp, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio, _tamanyocosecha, _frecuenciaCosecha);
+      _lista.add(_mina);
+    });
+
+    return _lista;
+  }
+
 }

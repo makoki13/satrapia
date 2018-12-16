@@ -46,6 +46,7 @@ class Transporte {
       // console.log ('descarga en palacio');      
       //this._almacenDestino.addCantidad(this._cantidad);
       this._almacenDestino.addCantidad(this._cantidad);
+      //print("Enviados recursos ${this._recurso.getNombre()}");
       this._destino.enviadoRecursos(this._recurso);
       this._origen.setStatus('Envio finalizado');
       this._origen.hayEnvioEnMarcha = false;

@@ -41,4 +41,6 @@ class Almacen {
   Punto getPosicion() { return this._posicion; }
 
   int getMaxCantidad() { return this._maxCantidad; }
+
+  void setCantidad( int cantidad) { this._cantidad = cantidad; }
 }
