@@ -183,7 +183,6 @@ class DBProvider {
     var table = await dbClient.rawQuery(
         "SELECT COUNT(*) FROM Parametros WHERE Codigo='Partida Nueva'");
     int resultado = Sqflite.firstIntValue(table);
-    print("Resultado: $resultado");
     return (resultado > 0);
   }
 
@@ -223,8 +222,6 @@ class DBProvider {
     var dbClient = await database;
     String sql = "SELECT Usuario,Nombre,Tipo FROM Jugador WHERE ID=$id";
     var table = await dbClient.rawQuery(sql);
-    print("SQL $sql : filas $table");
-    print("Jugador: ${table.first}");
     int _usuario = table.first["usuario"];
     String _nombre = table.first["nombre"];
     int _tipo = table.first["tipo"];
@@ -273,7 +270,6 @@ class DBProvider {
     var dbClient = await database;
     var table = await dbClient.rawQuery(
         "SELECT Id,Nombre,Tipo FROM Imperio WHERE Jugador=${jugador.getID()}");
-    print("Imperio: ${table.first}");
     int _id = table.first["id"];
     String _nombre = table.first["nombre"];
     int _tipo = table.first["tipo"];
@@ -314,7 +310,6 @@ class DBProvider {
         .getID()}";
 
     var table = await dbClient.rawQuery(_sql);
-    print("Provincia: ${table.first}");
     int _id = table.first["id"];
     String _nombre = table.first["nombre"];
     int _tribu = table.first["tribu"];
@@ -358,7 +353,6 @@ class DBProvider {
     var table = await dbClient.rawQuery(
         "SELECT id,nombre,x,y,z FROM Ciudad WHERE Provincia=${provincia
             .getID()} AND esCapital=1");
-    print("Capital: ${table.first}");
     int _id = table.first["id"];
     String _nombre = table.first["nombre"];
     int _x = table.first["x"];
@@ -392,7 +386,6 @@ class DBProvider {
     var table = await dbClient.rawQuery(
         "SELECT Id,Nombre,oro,poblacion FROM Palacio WHERE Capital=${capital
             .getID()}");
-    print("Palacio: ${table.first}");
     int _id = table.first["id"];
     String _nombre = table.first["nombre"];
     int _oro = table.first["oro"];
@@ -468,7 +461,6 @@ class DBProvider {
       SELECT Id,Nombre,Comida_Stock,Comida_Capacidad,Madera_Stock,Madera_Capacidad,Piedra_Stock,Piedra_Capacidad,Hierro_Stock,Hierro_Capacidad 
       FROM Silos WHERE Capital=${capital.getID()}
     """);
-    print("Silos: ${table.first}");
     int _id = table.first["id"];
     String _nombre = table.first["nombre"];
     int _comidaStock = table.first["comida_stock"];
@@ -524,7 +516,6 @@ class DBProvider {
     var dbClient = await database;
     var table = await dbClient.rawQuery(
         "SELECT Id,Nombre FROM Cuartel WHERE Capital=${capital.getID()}");
-    print("Cuartel: ${table.first}");
     int _id = table.first["Id"];
     String _nombre = table.first["Nombre"];
 
@@ -555,7 +546,6 @@ class DBProvider {
     var table = await dbClient.rawQuery(
         "SELECT Id,Nombre FROM CentroDeInvestigacion WHERE Capital=${capital
             .getID()}");
-    print("Centro de Investigacion: ${table.first}");
     int _id = table.first["Id"];
     String _nombre = table.first["Nombre"];
 
@@ -731,11 +721,23 @@ class DBProvider {
       _tamanyocosecha = registro["tamanyo_cosecha"];
       _frecuenciaCosecha = registro["frecuencia_cosecha"];
 
-      MinaDeHierro _mina = MinaDeHierro.fromDB(_id, _nombre, _posicion, capital, disp, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio, _tamanyocosecha, _frecuenciaCosecha);
+      int costeConstruccion = 250;
+      int tiempoContruccion = 5;
+
+      MinaDeHierro _mina = MinaDeHierro.fromDB(_id, _nombre, _posicion, capital, disp, costeConstruccion, tiempoContruccion, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio,
+          _tamanyocosecha, _frecuenciaCosecha);
       _lista.add(_mina);
     });
 
     return _lista;
+  }
+
+  Future<void> borraCentrosDeRecursos() async {
+    var dbClient = await database;
+    dbClient.rawDelete("Delete from Granja");
+    dbClient.rawDelete("Delete from Serreria");
+    dbClient.rawDelete("Delete from Cantera");
+    dbClient.rawDelete("Delete from Mina_Hierro");
   }
 
 }

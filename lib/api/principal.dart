@@ -48,12 +48,10 @@ class Principal {
     });
     */
     if (esPartidanueva==true) {
-      print("CREA PARTIDA");
       DBProvider.db.salvaPartidaNueva();
       var res = await API.generaImperio(0, _modelo);
     }
     else {
-      print("CARGA PARTIDA");
       API.cargaImperio(0, _modelo);
     }
   }

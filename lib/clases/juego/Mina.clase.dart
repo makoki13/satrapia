@@ -39,6 +39,24 @@ class Mina extends Edificio {
     this.almacenDestino = this._capital.getSilos().getAlmacenHierro(); if (this._recurso == ORO) this.almacenDestino =  this._capital.getPalacio().getAlmacen();
   }
 
+  Mina.fromDB (this.id, this._nombre, this._tipoEdificio, this._recurso, this._posicion, this._capital, this._disp, this._costeConstruccion, this._tiempoConstruccion,
+      int filonCantidad, int topeAlmacen, int cantidadActual, int ratio, int tamanyoCosecha, int frecuenciaCosecha)
+      :  super (id, _nombre, _tipoEdificio, _posicion, _costeConstruccion, _tiempoConstruccion) {
+
+    this.filon = new Productor ( null, this._recurso, 20000, 20000, 1);
+    this.almacen = new Almacen ( 67, 'Filón de ' + this._recurso.getNombre(), this._recurso, this._posicion, topeAlmacen);
+
+    this.almacen.setCantidad(cantidadActual);
+
+    this.mineros = new Extractor (this.filon, this.almacen, tamanyoCosecha);
+
+    this._disp.addTareaRepetitiva(extrae, frecuenciaCosecha);
+
+    this.setStatus ('Sin envios actuales');
+
+    this.almacenDestino = this._capital.getSilos().getAlmacenHierro(); if (this._recurso == ORO) this.almacenDestino =  this._capital.getPalacio().getAlmacen();
+  }
+
   String toString() { return this._nombre;}
 
   extrae() {
@@ -47,7 +65,7 @@ class Mina extends Edificio {
     this.almacen.addCantidad (cantidad);
 
     /* Si el almacen alcanza el tope enviar un transporte de recursos a palacio */
-    //print("Cantidad: ${this.almacen.getCantidad()} vs ${this.almacen.getMaxCantidad()}");
+    //print("$cantidad __ Cantidad: ${this.almacen.getCantidad()} vs ${this.almacen.getMaxCantidad()}");
     if (this.almacen.getCantidad() >= this.almacen.getMaxCantidad()) {
       if (this.hayEnvioEnMarcha == false) {
         this.hayEnvioEnMarcha = true;
@@ -106,6 +124,13 @@ class MinaDeHierro extends Mina {
   
   MinaDeHierro (this.id, this.nombre, Punto posicion, Capital capital, Dispatcher disp) : super (id, nombre, TipoEdificio.MINA_DE_HIERRO, HIERRO, posicion, capital, disp,
     MinaDeHierro.costeConstruccion, MinaDeHierro.tiempoContruccion) {
+    capital.addMinaDeHierro(this);
+  }
+
+  MinaDeHierro.fromDB (this.id, String nombre, Punto posicion, Capital capital, Dispatcher dispatcher, costeConstruccion, tiempoConstruccion,
+      int filonCantidad, int topeAlmacen, int cantidadActual, int ratio, int tamanyoCosecha, int frecuenciaCosecha) :
+      super.fromDB (id, nombre, TipoEdificio.MINA_DE_HIERRO, HIERRO, posicion, capital, dispatcher, costeConstruccion, tiempoConstruccion,
+          filonCantidad, topeAlmacen, cantidadActual, ratio, tamanyoCosecha, frecuenciaCosecha){
     capital.addMinaDeHierro(this);
   }
 

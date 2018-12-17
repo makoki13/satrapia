@@ -3,47 +3,53 @@
 //import './../tools/Persistencia.clase.dart';
 
 class Parametros {
-  static final num MAX_ENTERO = 1000000000000;
-  static final MinaDeOro_Num_Total = 10;
+  static final int MAX_ENTERO = 1000000000000;
+  static int MinaDeOro_Num_Total = 10;
 
-  static num Granja_Construccion_Coste = 50;
-  static num Granja_Construccion_Tiempo = 10;
-  static num Granja_Productor_CantidadInicial = 0;
-  static num Granja_Productor_CantidadMaxima = 0; // Ilimitado
-  static num Granja_Productor_Ratio = 1;
-  static num Granja_Almacen_Capacidad = 3;
-  static num Granja_Cosecha_Tamanyo = 1;
-  static num Granja_Cosecha_Frecuencia = 1;
-  static num Granja_Num_Total = 10;
+  static int Granja_Construccion_Coste = 50;
+  static int Granja_Construccion_Tiempo = 10;
+  static int Granja_Productor_CantidadInicial = 0;
+  static int Granja_Productor_CantidadMaxima = 0; // Ilimitado
+  static int Granja_Productor_Ratio = 100;
+  static int Granja_Almacen_Capacidad = 3;
+  static int Granja_Cosecha_Tamanyo = 1;
+  static int Granja_Cosecha_Frecuencia = 1;
+  static int Granja_Num_Total = 10;
 
-  static num Serreria_Construccion_Coste = 110;
-  static num Serreria_Construccion_Tiempo = 10;
-  static num Serreria_Productor_CantidadInicial = 0;
-  static num Serreria_Productor_CantidadMaxima = 0; // Ilimitado
-  static num Serreria_Productor_Ratio = 1;
-  static num Serreria_Almacen_Capacidad = 5;
-  static num Serreria_Cosecha_Tamanyo = 1;
-  static num Serreria_Cosecha_Frecuencia = 1;
-  static num Serreria_Num_Total = 10;
+  static int Serreria_Construccion_Coste = 110;
+  static int Serreria_Construccion_Tiempo = 10;
+  static int Serreria_Productor_CantidadInicial = 0;
+  static int Serreria_Productor_CantidadMaxima = 0; // Ilimitado
+  static int Serreria_Productor_Ratio = 100;
+  static int Serreria_Almacen_Capacidad = 5;
+  static int Serreria_Cosecha_Tamanyo = 1;
+  static int Serreria_Cosecha_Frecuencia = 1;
+  static int Serreria_Num_Total = 10;
 
-  static num Cantera_Construccion_Coste = 110;
-  static num Cantera_Construccion_Tiempo = 10;
-  static num Cantera_Productor_CantidadInicial = 10000;
-  static num Cantera_Productor_CantidadMaxima = 10000;
-  static num Cantera_Productor_Ratio = 1;
-  static num Cantera_Almacen_Capacidad = 5;
-  static num Cantera_Cosecha_Tamanyo = 1;
-  static num Cantera_Cosecha_Frecuencia = 1;
-  static num Cantera_Num_Total = 10;
+  static int Cantera_Construccion_Coste = 110;
+  static int Cantera_Construccion_Tiempo = 10;
+  static int Cantera_Productor_CantidadInicial = 10000;
+  static int Cantera_Productor_CantidadMaxima = 10000;
+  static int Cantera_Productor_Ratio = 100;
+  static int Cantera_Almacen_Capacidad = 5;
+  static int Cantera_Cosecha_Tamanyo = 1;
+  static int Cantera_Cosecha_Frecuencia = 1;
+  static int Cantera_Num_Total = 10;
 
-  static num MinaDeHierro_Num_Total = 10;
+  static int MinaDeHierro_Num_Total = 10;
+  static int MinaDeHierro_Productor_CantidadInicial = 20000;
+  static int MinaDeHierro_Productor_CantidadMaxima = 20000;
+  static int MinaDeHierro_Productor_Ratio = 100;
+  static int MinaDeHierro_Almacen_Capacidad = 5;
+  static int MinaDeHierro_Cosecha_Tamanyo = 1;
+  static int MinaDeHierro_Cosecha_Frecuencia = 1;
 
-  static num Transporte_Tiempo_Recalculo_Ruta = 1;
+  static int Transporte_Tiempo_Recalculo_Ruta = 1;
   static num Transporte_Velocidad = 0.83; // m/s
 
-  static num Filon_Vacio = 0;
+  static int Filon_Vacio = 0;
 
-  static num oroInicial = 5000;
+  static int oroInicial = 5000;
 
   static num IDpartida = null;
 

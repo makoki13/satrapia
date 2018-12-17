@@ -100,8 +100,6 @@ class API {
 
     Estructura._provincia = await ApiModelo.getProvincia(Estructura._jugador);
 
-    print ("Provincia ${Estructura._provincia.getID()}");
-
     Estructura._capital = await ApiModelo.getCapital(Estructura._provincia);
     Estructura._ciudades = new List<Localidad>();
     Estructura._ciudades.add(Estructura._capital);
@@ -117,9 +115,9 @@ class API {
     Estructura._centroDeInvestigacion = await ApiModelo.getCentroDeInvestigacion(Estructura._capital, Estructura._dispatcher);
 
     Estructura.granjas = await ApiModelo.getGranjas(Estructura._capital, Estructura._dispatcher);
-    Estructura.serrerias = ApiModelo.getSerrerias();
-    Estructura.canteras = ApiModelo.getCanteras();
-    Estructura.minasDeHierro = ApiModelo.getMinasDeHierro();
+    Estructura.serrerias = await ApiModelo.getSerrerias(Estructura._capital, Estructura._dispatcher);
+    Estructura.canteras = await ApiModelo.getCanteras(Estructura._capital, Estructura._dispatcher);
+    Estructura.minasDeHierro = await ApiModelo.getMinasDeHierro(Estructura._capital, Estructura._dispatcher);
   }
 
   static void generaImperio(int jugador, Model modelo) {
@@ -229,7 +227,7 @@ class API {
     Estructura.granjas.add(_granja);
 
     ApiModelo.addGranja(indice, nombre, Estructura._capital, posicion, Parametros.Granja_Productor_CantidadInicial, Parametros.Granja_Almacen_Capacidad,
-        0, 100, Parametros.Granja_Cosecha_Tamanyo, Granja.cosechaFrecuencia, Estructura._capital.getProvincia().getJugador());
+        0, Parametros.Granja_Productor_Ratio, Parametros.Granja_Cosecha_Tamanyo, Granja.cosechaFrecuencia, Estructura._capital.getProvincia().getJugador());
 
     return indice;
   }
@@ -258,9 +256,11 @@ class API {
   /* SERRERIAS */
   static int creaSerreria(Punto posicion) {
     int indice = Estructura.serrerias.length + 1;
-    Serreria _serreria = new Serreria(indice, 'Serreria de Makoki $indice', posicion, Estructura._capital, Estructura._dispatcher);
+    String nombre = 'Serreria de Makoki $indice';
+    Serreria _serreria = new Serreria(indice, nombre, posicion, Estructura._capital, Estructura._dispatcher);
     Estructura.serrerias.add(_serreria);
-    ApiModelo.addSerreria();
+    ApiModelo.addSerreria(indice, nombre, Estructura._capital, posicion, Parametros.Serreria_Productor_CantidadInicial, Parametros.Serreria_Almacen_Capacidad, 0,
+        Parametros.Serreria_Productor_Ratio, Parametros.Serreria_Cosecha_Tamanyo, Parametros.Serreria_Cosecha_Frecuencia, Estructura._capital.getProvincia().getJugador());
     return indice;
   }
 
@@ -288,9 +288,11 @@ class API {
   /* CANTERAS */
   static int creaCantera(Punto posicion) {
     int indice = Estructura.canteras.length + 1;
-    Cantera _cantera = new Cantera(indice, 'Cantera de Makoki $indice', posicion, Estructura._capital, Estructura._dispatcher);
+    String nombre = 'Cantera de Makoki $indice';
+    Cantera _cantera = new Cantera(indice, nombre, posicion, Estructura._capital, Estructura._dispatcher);
     Estructura.canteras.add(_cantera);
-    ApiModelo.addCantera();
+    ApiModelo.addCantera(indice, nombre, Estructura._capital, posicion, Parametros.Cantera_Productor_CantidadInicial, Parametros.Cantera_Almacen_Capacidad, 0,
+        Parametros.Cantera_Productor_Ratio, Parametros.Cantera_Cosecha_Tamanyo, Parametros.Cantera_Cosecha_Frecuencia, Estructura._capital.getProvincia().getJugador());
     return indice;
   }
 
@@ -318,9 +320,11 @@ class API {
   /* MINAS DE HIERRO */
   static int creaMinaDeHierro(Punto posicion) {
     int indice = Estructura.minasDeHierro.length + 1;
-    MinaDeHierro _minaDeHierro = new MinaDeHierro(indice, 'Mina de hierro de Makoki $indice', posicion, Estructura._capital, Estructura._dispatcher);
+    String _nombre = 'Mina de hierro de Makoki $indice';
+    MinaDeHierro _minaDeHierro = new MinaDeHierro(indice, _nombre, posicion, Estructura._capital, Estructura._dispatcher);
     Estructura.minasDeHierro.add(_minaDeHierro);
-    ApiModelo.addMinaDeHierro();
+    ApiModelo.addMinaDeHierro(indice, _nombre, Estructura._capital, posicion, Parametros.MinaDeHierro_Productor_CantidadInicial, Parametros.MinaDeHierro_Almacen_Capacidad, 0,
+        Parametros.MinaDeHierro_Productor_Ratio, Parametros.MinaDeHierro_Cosecha_Tamanyo, Parametros.Cantera_Cosecha_Frecuencia, Estructura._capital.getProvincia().getJugador());
     return indice;
   }
 

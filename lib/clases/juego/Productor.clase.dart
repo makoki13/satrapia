@@ -18,7 +18,7 @@ class Productor {
     // Los productores con cantidadMaxima = 0 son inagotables.
     if (this._cantidadMaxima == 0) { return cantidad; }
     if (cantidad > this._cantidadInicial ) {
-      //if (this._recurso == HIERRO ) { print('A: Cantidad B: $cantidad Cantidad maxima: ${this._cantidadInicial}'); }
+      if (this._recurso == HIERRO ) { print('HIERRO: Cantidad B: $cantidad Cantidad maxima: ${this._cantidadInicial}'); }
       cantidad = this._cantidadInicial;
       this._cantidadInicial = 0;
     } else {

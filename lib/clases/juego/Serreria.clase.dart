@@ -32,7 +32,25 @@ class Serreria extends Edificio {
     this._almacen = new Almacen ( 67, 'Silo de madera', MADERA, this._posicion, Parametros.Serreria_Almacen_Capacidad);    
     this._lenyadores = new Extractor (this._filon, this._almacen, Parametros.Serreria_Cosecha_Tamanyo);
 
-    this._disp.addTareaRepetitiva(extrae, Parametros.Serreria_Cosecha_Tamanyo);
+    this._disp.addTareaRepetitiva(extrae, Parametros.Serreria_Cosecha_Frecuencia);
+
+    this.setStatus ('Sin envios actuales');
+  }
+
+  Serreria.fromDB (this.id, this._nombre, this._posicion, this._capital, this._disp, int filonCantidad, int topeAlmacen, int cantidadActual, int ratio,
+      int tamanyoCosecha, int frecuenciaCosecha)
+      :  super (id, _nombre, TipoEdificio.SERRERIA, _posicion, Serreria.costeConstruccion, Serreria.tiempoContruccion) {
+    this._capital.addSerreria(this);
+
+    this._filon = new Productor ( null, MADERA, cantidadActual, filonCantidad, ratio);
+    this._almacen = new Almacen ( 67, 'Silo de madera', MADERA, this._posicion, topeAlmacen);
+
+    _almacen.setCantidad(cantidadActual);
+
+    //print("Serria from db tamaño cosecha: $tamanyoCosecha");
+    this._lenyadores = new Extractor (this._filon, this._almacen, tamanyoCosecha);
+
+    this._disp.addTareaRepetitiva(extrae, frecuenciaCosecha);
 
     this.setStatus ('Sin envios actuales');
   }
@@ -41,9 +59,12 @@ class Serreria extends Edificio {
 
   extrae() {
     num cantidad = this._lenyadores.getCantidad();
+    //print("Serria extrae: $cantidad");
     this._almacen.addCantidad (cantidad);
+    //print("Serria cantidad: ${this._almacen.getCantidad()}");
 
     /* Si el almacen alcanza el tope enviar un transporte de comida a palacio */
+    //print("${this._almacen.getCantidad()} vs ${this._almacen.getMaxCantidad()}");
     if (this._almacen.getCantidad() >= this._almacen.getMaxCantidad()) {
       if (this.hayEnvioEnMarcha == false) {
         this.hayEnvioEnMarcha = true;

@@ -141,20 +141,21 @@ class ApiModelo {
     return DBProvider.db.getGranjas(capital, dispatcher);
   }
 
-  static List<Serreria> getSerrerias() {
-    return new List<Serreria>();
+  static Future<List<Serreria>> getSerrerias(Capital capital, Dispatcher dispatcher) {
+    return DBProvider.db.getSerreria(capital, dispatcher);
   }
 
-  static List<Cantera> getCanteras() {
-    return new List<Cantera>();
+  static Future<List<Cantera>> getCanteras(Capital capital, Dispatcher dispatcher) {
+    return DBProvider.db.getCantera(capital, dispatcher);
   }
 
-  static List<MinaDeHierro> getMinasDeHierro() {
-    return new List<MinaDeHierro>();
+  static Future<List<MinaDeHierro>> getMinasDeHierro(Capital capital, Dispatcher dispatcher) {
+    return DBProvider.db.getMinaDeHierro(capital, dispatcher);
   }
 
-  /** TODO eliminar y crear registros de granja, serreria, cantera, mina de hierro y mina de oro */
-  static void inicializaCentrosDeRecursos() {}
+  static void inicializaCentrosDeRecursos() {
+    DBProvider.db.borraCentrosDeRecursos();
+  }
 
   static void addGranja(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int cantidadActualAlmacen, int ratio,
       int tamanyoCosecha, int frecuenciaCosecha, Jugador propietario) {
