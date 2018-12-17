@@ -29,20 +29,19 @@ class Palacio extends Edificio {
 
   Palacio (this._id, this._nombre, this._capital, this._disp) :  super (_id, _nombre, TipoEdificio.PALACIO, _capital.getPosicion(), 0, 0) {
     this._capital.setPalacio(this);
-
-    num cantidadInicial = 2;
-    this._impuestos = new Productor ( null, ORO, 2, 0, 1);
+    
+    this._impuestos = new Productor ( null, ORO, 0, 0);
     this._oro = new Almacen ( 66, 'Deposito de oro', ORO, _capital.getPosicion(), Parametros.MAX_ENTERO);
     this._oro.addCantidad(Parametros.oroInicial);
-    this._recaudador = new Extractor (this._impuestos, this._oro, cantidadInicial);
-    //this._disp.addTareaRepetitiva(recaudaImpuestos, 1);
 
-    cantidadInicial = 100; const cantidadMaxima = 0;
-    this._alojamientos = new Productor ( null, POBLACION, cantidadInicial, cantidadMaxima, 1);
+    this._alojamientos = new Productor ( null, POBLACION, Parametros.Poblacion_Cantidad_Inicial, Parametros.Poblacion_Cantidad_Maxima);
     this._poblacion = new Almacen ( 67, 'Población', POBLACION, _capital.getPosicion(), 1000);
     this._crecimientoDemografico = new Extractor (this._alojamientos, this._poblacion, 10);
 
-    //this._disp.addTareaRepetitiva(realizaCenso, 1);
+    int tamanyoCosecha = (Parametros.Poblacion_Cantidad_Inicial * (Parametros.Poblacion_Productor_Ratio / 100)).toInt();
+    this._recaudador = new Extractor (this._impuestos, this._oro, tamanyoCosecha);
+
+    this._disp.addTareaRepetitiva(realizaCenso, 1);
   }
 
   String toString() { return this._nombre;}
@@ -57,6 +56,11 @@ class Palacio extends Edificio {
     num cantidad = this._crecimientoDemografico.getCantidad();
     this._poblacion.addCantidad (cantidad);
     API.setPoblacionActual();
+
+    /* Poner aqui la recaudación de impuestos */
+    int tamanyoCosecha = (cantidad * (Parametros.Poblacion_Productor_Ratio / 100)).toInt();
+    this._oro.addCantidad (tamanyoCosecha);
+    API.setOroActual();
   }
 
   num getOroActual() { return this._oro.getCantidad(); }

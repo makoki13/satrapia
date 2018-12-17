@@ -10,10 +10,10 @@ import './Transporte.clase.dart';
 import './Punto.clase.dart';
 
 class Cantera extends Edificio {
-  int costeConstruccion = Parametros.Cantera_Construccion_Coste;
-  int tiempoConstruccion = Parametros.Cantera_Construccion_Tiempo;
-  int cantidadInicial = Parametros.Cantera_Productor_CantidadInicial;
-  int cantidadMaxima = Parametros.Cantera_Productor_CantidadMaxima;
+  //int costeConstruccion = Parametros.Cantera_Construccion_Coste;
+  //int tiempoConstruccion = Parametros.Cantera_Construccion_Tiempo;
+  //int cantidadInicial = Parametros.Cantera_Productor_CantidadInicial;
+  //int cantidadMaxima = Parametros.Cantera_Productor_CantidadMaxima;
 
   int _id;
   String _nombre;
@@ -24,30 +24,36 @@ class Cantera extends Edificio {
   Productor _filon;
   Almacen _almacen;
   
-  Cantera (this._id, this._nombre, this._posicion, this._capital, this._disp) :  super (_id, _nombre, TipoEdificio.CANTERA_DE_PIEDRA, _posicion,
+  Cantera (this._id, this._nombre, this._posicion, this._capital, this._disp, int cantidadMaxima) :  super (_id, _nombre, TipoEdificio.CANTERA_DE_PIEDRA, _posicion,
       Parametros.Cantera_Construccion_Coste, Parametros.Cantera_Construccion_Tiempo) {
 
     this._capital.addCantera(this);
 
-    this._filon = new Productor ( null, PIEDRA, this.cantidadInicial, this.cantidadMaxima, Parametros.Cantera_Productor_Ratio);
+    this._filon = new Productor ( null, PIEDRA, cantidadMaxima, cantidadMaxima);
+    
     this._almacen = new Almacen ( 68, 'Cantera de piedra', PIEDRA, this._posicion, Parametros.Cantera_Almacen_Capacidad);
-    this._canteros = new Extractor (this._filon, this._almacen, Parametros.Cantera_Cosecha_Tamanyo);
 
+    int tamanyoCosecha = (Parametros.Cantera_Cosecha_Tamanyo * (Parametros.Cantera_Productor_Ratio / 100)).toInt();
+    this._canteros = new Extractor (this._filon, this._almacen, tamanyoCosecha);
     this._disp.addTareaRepetitiva(extrae, Parametros.Cantera_Cosecha_Tamanyo);
 
     this.setStatus ('Sin envios actuales');
   }
 
-  Cantera.fromDB (this._id, this._nombre, this._posicion, this._capital, this._disp, int filonCantidad, int topeAlmacen, int cantidadActual, int ratio,
-      int tamanyoCosecha, int frecuenciaCosecha)
+  Cantera.fromDB (this._id, this._nombre, this._posicion, this._capital, this._disp, 
+      int stockProductor, int productorCantidadMaxima,       
+      int tamanyoCosecha, int frecuenciaCosecha, int ratio,
+      int stockAlmacen, int topeAlmacen)
       :  super (_id, _nombre, TipoEdificio.GRANJA, _posicion, Parametros.Cantera_Construccion_Coste, Parametros.Cantera_Construccion_Tiempo) {
     this._capital.addCantera(this);
 
-    this._filon = new Productor ( null, PIEDRA, this.cantidadInicial, this.cantidadMaxima, ratio);
+    this._filon = new Productor ( null, PIEDRA, stockProductor, productorCantidadMaxima);
+
     this._almacen = new Almacen ( 67, 'Cantera de piedra', PIEDRA, this._posicion, topeAlmacen);
+    _almacen.setCantidad(stockAlmacen);
 
-    _almacen.setCantidad(cantidadActual);
 
+    tamanyoCosecha = (tamanyoCosecha * (ratio / 100)).toInt();    
     this._canteros = new Extractor (this._filon, this._almacen, tamanyoCosecha);
 
     this._disp.addTareaRepetitiva(extrae, frecuenciaCosecha);
@@ -90,5 +96,5 @@ class Cantera extends Edificio {
   String getStatus() { return this.status; }
   setStatus( String mensaje ) { super.setStatus(mensaje); }
 
-  bool estaActiva() { return (this._filon.getStock() > Parametros.Filon_Vacio); }
+  bool estaActiva() { return this._filon.estaAgotado(); }
 }

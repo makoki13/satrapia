@@ -4,7 +4,6 @@
 
 class Parametros {
   static final int MAX_ENTERO = 1000000000000;
-  static int MinaDeOro_Num_Total = 10;
 
   static int Granja_Construccion_Coste = 50;
   static int Granja_Construccion_Tiempo = 10;
@@ -41,8 +40,16 @@ class Parametros {
   static int MinaDeHierro_Productor_CantidadMaxima = 20000;
   static int MinaDeHierro_Productor_Ratio = 100;
   static int MinaDeHierro_Almacen_Capacidad = 5;
-  static int MinaDeHierro_Cosecha_Tamanyo = 1;
+  static int MinaDeHierro_Cosecha_Tamanyo = 1;  
   static int MinaDeHierro_Cosecha_Frecuencia = 1;
+  static int MinaDeHierro_Construccion_Coste = 130;
+  static int MinaDeHierro_Construccion_Tiempo = 15;
+  
+  static int MinaDeOro_Construccion_Coste = 100;
+  static int MinaDeOro_Construccion_Tiempo = 20;
+  static int MinaDeOro_Num_Total = 10;
+  static int MinaDeOro_Cosecha_Tamanyo = 1;
+  static int MinaDeOro_productor_ratio = 100;
 
   static int Transporte_Tiempo_Recalculo_Ruta = 1;
   static num Transporte_Velocidad = 0.83; // m/s
@@ -50,6 +57,9 @@ class Parametros {
   static int Filon_Vacio = 0;
 
   static int oroInicial = 5000;
+  static int Poblacion_Cantidad_Inicial = 100;
+  static int Poblacion_Cantidad_Maxima = 10000000;
+  static int Poblacion_Productor_Ratio = 1;
 
   static num IDpartida = null;
 

@@ -10,15 +10,15 @@ import './Dispatcher.clase.dart';
 import './Punto.clase.dart';
 
 class Granja extends Edificio {
-  static num costeConstruccion = Parametros.Granja_Construccion_Coste;
-  static num tiempoContruccion = Parametros.Granja_Construccion_Tiempo;
-  static num cantidadInicial = Parametros.Granja_Productor_CantidadInicial;
-  static num cantidadMaxima = Parametros.Granja_Productor_CantidadMaxima;
-  static num ratio = Parametros.Granja_Productor_Ratio;
-  static num capacidadAlmacen = Parametros.Granja_Almacen_Capacidad;
-  static num tamanyoCosecha = Parametros.Granja_Cosecha_Tamanyo;
-  static num cosechaFrecuencia = Parametros.Granja_Cosecha_Frecuencia;
-  static num maximoItems = Parametros.Granja_Num_Total;
+  //static num costeConstruccion = Parametros.Granja_Construccion_Coste;
+  //static num tiempoContruccion = Parametros.Granja_Construccion_Tiempo;
+  //static num cantidadInicial = Parametros.Granja_Productor_CantidadInicial;
+  //static num cantidadMaxima = Parametros.Granja_Productor_CantidadMaxima;
+  //static num ratio = Parametros.Granja_Productor_Ratio;
+  //static num capacidadAlmacen = Parametros.Granja_Almacen_Capacidad;
+  //static num tamanyoCosecha = Parametros.Granja_Cosecha_Tamanyo;
+  //static num cosechaFrecuencia = Parametros.Granja_Cosecha_Frecuencia;
+  //static num maximoItems = Parametros.Granja_Num_Total;
 
   Extractor _granjeros;
   Productor _filon;
@@ -30,31 +30,35 @@ class Granja extends Edificio {
   Capital _capital;
   Dispatcher _disp;
 
-  Granja (this.id, this._nombre, this._posicion, this._capital, this._disp) :  super (id, _nombre, TipoEdificio.GRANJA, _posicion, Granja.costeConstruccion, Granja.tiempoContruccion) {
+  Granja (this.id, this._nombre, this._posicion, this._capital, this._disp, int cantidadMaxima) :  super (id, _nombre, TipoEdificio.GRANJA, _posicion, 
+    Parametros.Granja_Construccion_Coste, Parametros.Granja_Construccion_Tiempo) {
     this._capital.addGranja(this);
 
-    this._filon = new Productor ( null, COMIDA, Parametros.Granja_Productor_CantidadInicial,
-    Parametros.Granja_Productor_CantidadMaxima, Parametros.Granja_Productor_Ratio);
+    this._filon = new Productor ( null, COMIDA, cantidadMaxima, cantidadMaxima);
+    
     this._almacen = new Almacen ( 67, 'Silo de comida', COMIDA, this._posicion, Parametros.Granja_Almacen_Capacidad);
-    this._granjeros = new Extractor (this._filon, this._almacen, Parametros.Granja_Cosecha_Tamanyo);
-
-    this._disp.addTareaRepetitiva(extrae, Granja.cosechaFrecuencia);
+    
+    int tamanyoCosecha = (Parametros.Granja_Cosecha_Tamanyo * (Parametros.Granja_Productor_Ratio / 100)).toInt();
+    this._granjeros = new Extractor (this._filon, this._almacen, tamanyoCosecha);
+    this._disp.addTareaRepetitiva(extrae, Parametros.Granja_Cosecha_Frecuencia);
 
     this.setStatus ('Sin envios actuales');
   }
 
-  Granja.fromDB (this.id, this._nombre, this._posicion, this._capital, this._disp, int filonCantidad, int topeAlmacen, int cantidadActual, int ratio,
-      int tamanyoCosecha, int frecuenciaCosecha)
-      :  super (id, _nombre, TipoEdificio.GRANJA, _posicion, Granja.costeConstruccion, Granja.tiempoContruccion) {
+  Granja.fromDB (this.id, this._nombre, this._posicion, this._capital, this._disp, 
+      int stockProductor, int productorCantidadMaxima,       
+      int tamanyoCosecha, int frecuenciaCosecha, int ratio,
+      int stockAlmacen, int topeAlmacen)
+      :  super (id, _nombre, TipoEdificio.GRANJA, _posicion, Parametros.Granja_Construccion_Coste, Parametros.Granja_Construccion_Tiempo) {
     this._capital.addGranja(this);
 
-    this._filon = new Productor ( null, COMIDA, cantidadActual, filonCantidad, ratio);
+    this._filon = new Productor ( null, COMIDA, stockProductor, productorCantidadMaxima);
+
     this._almacen = new Almacen ( 67, 'Silo de comida', COMIDA, this._posicion, topeAlmacen);
+    _almacen.setCantidad(stockAlmacen);
 
-    _almacen.setCantidad(cantidadActual);
-
+    tamanyoCosecha = (tamanyoCosecha * (ratio / 100)).toInt();
     this._granjeros = new Extractor (this._filon, this._almacen, tamanyoCosecha);
-
     this._disp.addTareaRepetitiva(extrae, frecuenciaCosecha);
 
     this.setStatus ('Sin envios actuales');
@@ -90,5 +94,5 @@ class Granja extends Edificio {
 
   String getStatus() { return this.status; }
   
-  bool estaActiva() { return (this._filon.getStock() > Parametros.Filon_Vacio); }
+  bool estaActiva() { return this._filon.estaAgotado(); }
 }

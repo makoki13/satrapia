@@ -135,8 +135,7 @@ class ApiModelo {
   static void setHierro(int hierroActual) {
     DBProvider.db.setHierro(hierroActual);
   }
-
-  /** TODO coger granjas, serrerias, canteras y minas de ls BD */
+  
   static Future<List<Granja>> getGranjas(Capital capital, Dispatcher dispatcher) {
     return DBProvider.db.getGranjas(capital, dispatcher);
   }
@@ -157,33 +156,33 @@ class ApiModelo {
     DBProvider.db.borraCentrosDeRecursos();
   }
 
-  static void addGranja(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int cantidadActualAlmacen, int ratio,
+  static void addGranja(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int ratio,
       int tamanyoCosecha, int frecuenciaCosecha, Jugador propietario) {
-    DBProvider.db.insertaGranja(id, nombre, capital, posicion, cantidadFilon, cantidadTopeAlmacen, cantidadActualAlmacen, ratio, tamanyoCosecha, frecuenciaCosecha, propietario);
+    DBProvider.db.insertaGranja(id, nombre, capital, posicion, cantidadFilon, cantidadTopeAlmacen, ratio, tamanyoCosecha, frecuenciaCosecha, propietario);
   }
 
   /** TODO */
   static void deleteGranja() {}
 
-  static void addSerreria(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int cantidadActualAlmacen, int ratio,
+  static void addSerreria(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int ratio,
       int tamanyoCosecha, int frecuenciaCosecha, Jugador propietario) {
-    DBProvider.db.insertaSerreria(id,nombre,capital,posicion,cantidadFilon,cantidadTopeAlmacen,cantidadActualAlmacen,ratio,tamanyoCosecha,frecuenciaCosecha,propietario);
+    DBProvider.db.insertaSerreria(id,nombre,capital,posicion,cantidadFilon,cantidadTopeAlmacen,ratio,tamanyoCosecha,frecuenciaCosecha,propietario);
   }
 
   /** TODO */
   static void deleteSerreria() {}
 
-  static void addCantera(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int cantidadActualAlmacen, int ratio,
+  static void addCantera(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int ratio,
       int tamanyoCosecha, int frecuenciaCosecha, Jugador propietario) {
-    DBProvider.db.insertaCantera(id,nombre,capital,posicion,cantidadFilon,cantidadTopeAlmacen,cantidadActualAlmacen,ratio,tamanyoCosecha,frecuenciaCosecha,propietario);
+    DBProvider.db.insertaCantera(id,nombre,capital,posicion,cantidadFilon,cantidadTopeAlmacen,ratio,tamanyoCosecha,frecuenciaCosecha,propietario);
   }
 
   /** TODO */
   static void deleteCantera() {}
 
-  static void addMinaDeHierro(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int cantidadActualAlmacen, int ratio,
+  static void addMinaDeHierro(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int ratio,
       int tamanyoCosecha, int frecuenciaCosecha, Jugador propietario) {
-    DBProvider.db.insertaMinaDeHierro(id,nombre,capital,posicion,cantidadFilon,cantidadTopeAlmacen,cantidadActualAlmacen,ratio,tamanyoCosecha,frecuenciaCosecha,propietario);
+    DBProvider.db.insertaMinaDeHierro(id,nombre,capital,posicion,cantidadFilon,cantidadTopeAlmacen,ratio,tamanyoCosecha,frecuenciaCosecha,propietario);
   }
 
   /** TODO */

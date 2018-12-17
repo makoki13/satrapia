@@ -7,6 +7,7 @@ import './Dispatcher.clase.dart';
 import './Recurso.clase.dart';
 import './Transporte.clase.dart';
 import './Punto.clase.dart';
+import './Parametros.clase.dart';
 
 class Mina extends Edificio {
   num _costeConstruccion;
@@ -26,13 +27,17 @@ class Mina extends Edificio {
   Dispatcher _disp;
   Punto _posicion;
 
-  Mina (this.id, this._nombre, this._tipoEdificio, this._recurso, this._posicion, this._capital, this._disp, this._costeConstruccion, this._tiempoConstruccion) : 
+  Mina (this.id, this._nombre, this._tipoEdificio, this._recurso, this._posicion, this._capital, this._disp, this._costeConstruccion, this._tiempoConstruccion, cantidadMaxima,
+    int capacidadAlmacen, int cosechaTamanyo, int productorRatio ) : 
     super (id, _nombre, _tipoEdificio, _posicion, _costeConstruccion, _tiempoConstruccion) {
+  
+    this.filon = new Productor ( null, this._recurso, cantidadMaxima, cantidadMaxima);
 
-    this.filon = new Productor ( null, this._recurso, 20000, 20000, 1);
-    this.almacen = new Almacen ( 67, 'Filón de ' + this._recurso.getNombre() , this._recurso, _posicion, 10);
-    const cantidadInicial = 1;
-    this.mineros = new Extractor (this.filon, this.almacen, cantidadInicial);
+    this.almacen = new Almacen ( 67, 'Filón de ' + this._recurso.getNombre() , this._recurso, _posicion, capacidadAlmacen);
+
+    int tamanyoCosecha = (cosechaTamanyo * (productorRatio / 100)).toInt();    
+    this.mineros = new Extractor (this.filon, this.almacen, tamanyoCosecha);
+
     this._disp.addTareaRepetitiva(extrae, 1);
     this.setStatus ('Sin envios actuales');
 
@@ -40,16 +45,18 @@ class Mina extends Edificio {
   }
 
   Mina.fromDB (this.id, this._nombre, this._tipoEdificio, this._recurso, this._posicion, this._capital, this._disp, this._costeConstruccion, this._tiempoConstruccion,
-      int filonCantidad, int topeAlmacen, int cantidadActual, int ratio, int tamanyoCosecha, int frecuenciaCosecha)
+      int stockProductor, int productorCantidadMaxima,       
+      int tamanyoCosecha, int frecuenciaCosecha, int ratio,
+      int stockAlmacen, int topeAlmacen)
       :  super (id, _nombre, _tipoEdificio, _posicion, _costeConstruccion, _tiempoConstruccion) {
+  
+    this.filon = new Productor ( null, this._recurso, stockProductor, productorCantidadMaxima);
 
-    this.filon = new Productor ( null, this._recurso, 20000, 20000, 1);
     this.almacen = new Almacen ( 67, 'Filón de ' + this._recurso.getNombre(), this._recurso, this._posicion, topeAlmacen);
-
-    this.almacen.setCantidad(cantidadActual);
-
+    this.almacen.setCantidad(stockAlmacen);
+  
+    tamanyoCosecha = (tamanyoCosecha * (ratio / 100)).toInt();
     this.mineros = new Extractor (this.filon, this.almacen, tamanyoCosecha);
-
     this._disp.addTareaRepetitiva(extrae, frecuenciaCosecha);
 
     this.setStatus ('Sin envios actuales');
@@ -90,7 +97,7 @@ class Mina extends Edificio {
 
   String getStatus() { return this.status; }
   
-  bool estaActiva() { return (this.filon.getStock() > 0); }
+  bool estaActiva() { return this.filon.estaAgotado(); }
 }
 
 
@@ -102,9 +109,10 @@ class MinaDeOro extends Mina {
 
   num id;
   String nombre;
-  
-  MinaDeOro (this.id, this.nombre, Punto posicion, Capital capital, Dispatcher disp) : super (id, nombre, TipoEdificio.MINA_DE_ORO, ORO, posicion, capital, disp, 
-    MinaDeOro.costeConstruccion, MinaDeOro.tiempoContruccion) {
+
+  MinaDeOro (this.id, this.nombre, Punto posicion, Capital capital, Dispatcher disp, int cantidadMaxima, int capacidadAlmacen) : 
+    super (id, nombre, TipoEdificio.MINA_DE_ORO, ORO, posicion, capital, disp, Parametros.MinaDeOro_Construccion_Coste, Parametros.MinaDeOro_Construccion_Tiempo, cantidadMaxima,
+    capacidadAlmacen, Parametros.MinaDeOro_Cosecha_Tamanyo, Parametros.MinaDeOro_productor_ratio) {
     capital.addMinaDeOro(this);
   }
 
@@ -121,16 +129,19 @@ class MinaDeHierro extends Mina {
 
   num id;
   String nombre;
-  
-  MinaDeHierro (this.id, this.nombre, Punto posicion, Capital capital, Dispatcher disp) : super (id, nombre, TipoEdificio.MINA_DE_HIERRO, HIERRO, posicion, capital, disp,
-    MinaDeHierro.costeConstruccion, MinaDeHierro.tiempoContruccion) {
+
+  MinaDeHierro (this.id, this.nombre, Punto posicion, Capital capital, Dispatcher disp, int cantidadMaxima, int capacidadAlmacen) : 
+    super (id, nombre, TipoEdificio.MINA_DE_HIERRO, HIERRO, posicion, capital, disp, Parametros.MinaDeHierro_Construccion_Coste, Parametros.MinaDeHierro_Construccion_Tiempo, cantidadMaxima,
+    capacidadAlmacen, Parametros.MinaDeHierro_Cosecha_Tamanyo, Parametros.MinaDeHierro_Productor_Ratio) {
     capital.addMinaDeHierro(this);
   }
 
   MinaDeHierro.fromDB (this.id, String nombre, Punto posicion, Capital capital, Dispatcher dispatcher, costeConstruccion, tiempoConstruccion,
-      int filonCantidad, int topeAlmacen, int cantidadActual, int ratio, int tamanyoCosecha, int frecuenciaCosecha) :
+      int stockProductor, int productorCantidadMaxima,       
+      int tamanyoCosecha, int frecuenciaCosecha, int ratio,
+      int stockAlmacen, int topeAlmacen) :
       super.fromDB (id, nombre, TipoEdificio.MINA_DE_HIERRO, HIERRO, posicion, capital, dispatcher, costeConstruccion, tiempoConstruccion,
-          filonCantidad, topeAlmacen, cantidadActual, ratio, tamanyoCosecha, frecuenciaCosecha){
+          stockProductor, productorCantidadMaxima, tamanyoCosecha, frecuenciaCosecha, ratio, stockAlmacen, topeAlmacen){
     capital.addMinaDeHierro(this);
   }
 

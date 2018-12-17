@@ -223,11 +223,13 @@ class API {
   static int creaGranja(Punto posicion) {
     int indice = Estructura.granjas.length + 1;
     String nombre = 'Granja de Makoki $indice';
-    Granja _granja = new Granja(indice, nombre, posicion, Estructura._capital, Estructura._dispatcher);
+
+    /* El parámetro cantidad máxima será determinado por un valor aleatorio mejorado por la investigación correspondiente. De momento valor de parámetro */
+    Granja _granja = new Granja(indice, nombre, posicion, Estructura._capital, Estructura._dispatcher, Parametros.Granja_Productor_CantidadMaxima);
     Estructura.granjas.add(_granja);
 
-    ApiModelo.addGranja(indice, nombre, Estructura._capital, posicion, Parametros.Granja_Productor_CantidadInicial, Parametros.Granja_Almacen_Capacidad,
-        0, Parametros.Granja_Productor_Ratio, Parametros.Granja_Cosecha_Tamanyo, Granja.cosechaFrecuencia, Estructura._capital.getProvincia().getJugador());
+    ApiModelo.addGranja(indice, nombre, Estructura._capital, posicion, Parametros.Granja_Almacen_Capacidad, Parametros.Granja_Almacen_Capacidad, Parametros.Granja_Productor_Ratio,
+        Parametros.Granja_Cosecha_Tamanyo, Parametros.Granja_Cosecha_Frecuencia, Estructura._capital.getProvincia().getJugador());
 
     return indice;
   }
@@ -257,9 +259,10 @@ class API {
   static int creaSerreria(Punto posicion) {
     int indice = Estructura.serrerias.length + 1;
     String nombre = 'Serreria de Makoki $indice';
-    Serreria _serreria = new Serreria(indice, nombre, posicion, Estructura._capital, Estructura._dispatcher);
+    /* El parámetro cantidad máxima será determinado por un valor aleatorio mejorado por la investigación correspondiente. De momento valor de parámetro */
+    Serreria _serreria = new Serreria(indice, nombre, posicion, Estructura._capital, Estructura._dispatcher, Parametros.Serreria_Productor_CantidadMaxima);
     Estructura.serrerias.add(_serreria);
-    ApiModelo.addSerreria(indice, nombre, Estructura._capital, posicion, Parametros.Serreria_Productor_CantidadInicial, Parametros.Serreria_Almacen_Capacidad, 0,
+    ApiModelo.addSerreria(indice, nombre, Estructura._capital, posicion, Parametros.Serreria_Almacen_Capacidad, Parametros.Serreria_Almacen_Capacidad,
         Parametros.Serreria_Productor_Ratio, Parametros.Serreria_Cosecha_Tamanyo, Parametros.Serreria_Cosecha_Frecuencia, Estructura._capital.getProvincia().getJugador());
     return indice;
   }
@@ -289,9 +292,10 @@ class API {
   static int creaCantera(Punto posicion) {
     int indice = Estructura.canteras.length + 1;
     String nombre = 'Cantera de Makoki $indice';
-    Cantera _cantera = new Cantera(indice, nombre, posicion, Estructura._capital, Estructura._dispatcher);
+    /* El parámetro cantidad máxima será determinado por un valor aleatorio mejorado por la investigación correspondiente. De momento valor de parámetro */
+    Cantera _cantera = new Cantera(indice, nombre, posicion, Estructura._capital, Estructura._dispatcher, Parametros.Cantera_Productor_CantidadMaxima);
     Estructura.canteras.add(_cantera);
-    ApiModelo.addCantera(indice, nombre, Estructura._capital, posicion, Parametros.Cantera_Productor_CantidadInicial, Parametros.Cantera_Almacen_Capacidad, 0,
+    ApiModelo.addCantera(indice, nombre, Estructura._capital, posicion, Parametros.Cantera_Almacen_Capacidad, Parametros.Cantera_Almacen_Capacidad,
         Parametros.Cantera_Productor_Ratio, Parametros.Cantera_Cosecha_Tamanyo, Parametros.Cantera_Cosecha_Frecuencia, Estructura._capital.getProvincia().getJugador());
     return indice;
   }
@@ -321,9 +325,11 @@ class API {
   static int creaMinaDeHierro(Punto posicion) {
     int indice = Estructura.minasDeHierro.length + 1;
     String _nombre = 'Mina de hierro de Makoki $indice';
-    MinaDeHierro _minaDeHierro = new MinaDeHierro(indice, _nombre, posicion, Estructura._capital, Estructura._dispatcher);
+    /* El parámetro cantidad máxima será determinado por un valor aleatorio mejorado por la investigación correspondiente. De momento valor de parámetro */
+    MinaDeHierro _minaDeHierro = new MinaDeHierro(indice, _nombre, posicion, Estructura._capital, Estructura._dispatcher, 
+      Parametros.MinaDeHierro_Productor_CantidadMaxima, Parametros.MinaDeHierro_Almacen_Capacidad);
     Estructura.minasDeHierro.add(_minaDeHierro);
-    ApiModelo.addMinaDeHierro(indice, _nombre, Estructura._capital, posicion, Parametros.MinaDeHierro_Productor_CantidadInicial, Parametros.MinaDeHierro_Almacen_Capacidad, 0,
+    ApiModelo.addMinaDeHierro(indice, _nombre, Estructura._capital, posicion, Parametros.MinaDeHierro_Almacen_Capacidad, Parametros.MinaDeHierro_Almacen_Capacidad,
         Parametros.MinaDeHierro_Productor_Ratio, Parametros.MinaDeHierro_Cosecha_Tamanyo, Parametros.Cantera_Cosecha_Frecuencia, Estructura._capital.getProvincia().getJugador());
     return indice;
   }

@@ -76,27 +76,27 @@ class DBProvider {
 
           await db.execute("""
               CREATE TABLE Granja(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
-                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                cantidad_filon INTEGER, cantidad_tope_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
                 tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad) )
           """);
           await db.execute("""
               CREATE TABLE Serreria(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
-                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                cantidad_filon INTEGER, cantidad_tope_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
                 tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad))
           """);
           await db.execute("""
               CREATE TABLE Cantera(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
-                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                cantidad_filon INTEGER, cantidad_tope_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
                 tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad))
           """);
           await db.execute("""
               CREATE TABLE Mina_Hierro(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
-                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                cantidad_filon INTEGER, cantidad_tope_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
                 tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad))
           """);
           await db.execute("""
               CREATE TABLE Mina_Oro(id INTEGER, ciudad INTEGER, nombre TEXT, x INTEGER, y INTEGER, z INTEGER, 
-                cantidad_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
+                cantidad_filon INTEGER, cantidad_tope_filon INTEGER, cantidad_tope_almacen INTEGER, cantidad_actual_almacen INTEGER, ratio INTEGER,
                 tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER, PRIMARY KEY (id, ciudad))
           """);
         });
@@ -561,13 +561,13 @@ class DBProvider {
   tamanyo_cosecha INTEGER, frecuencia_cosecha INTEGER, propietario INTEGER)
   */
 
-  Future<int> insertaGranja(int i, String s, Capital capital, Punto posicion, int cantidad_filon, int cantidad_tope_almacen, int cantidad_actual_almacen, int ratio,
+  Future<int> insertaGranja(int i, String s, Capital capital, Punto posicion, int cantidad_tope_filon, int cantidad_tope_almacen, int ratio,
       int tamanyo_cosecha, int frecuencia_cosecha, Jugador propietario) async {
     var dbClient = await database;
     var res = await dbClient.rawInsert("""
-      INSERT Into Granja (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
+      INSERT Into Granja (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
       VALUES (
-        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_filon, $cantidad_tope_almacen, $cantidad_actual_almacen,
+        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_tope_filon, $cantidad_tope_filon, $cantidad_tope_almacen, 0,
         $ratio, $tamanyo_cosecha, $frecuencia_cosecha, ${propietario.getID()}
       )
     """);
@@ -575,7 +575,7 @@ class DBProvider {
   }
 
   Future<List<Granja>> getGranjas(Capital capital, Dispatcher disp) async {
-    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
+    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _filonCantidadMaxima; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
 
     List<Granja> _lista = List<Granja>();
 
@@ -589,13 +589,17 @@ class DBProvider {
       _nombre = registro["nombre"];
       _posicion = Punto(registro["x"], registro["y"], registro["z"] );
       _filonCantidad = registro["cantidad_filon"];
+      _filonCantidadMaxima = registro["cantidad_tope_filon"];
       _topeAlmacen = registro["cantidad_tope_almacen"];
       _cantidadActual = registro["cantidad_actual_almacen"];
       _ratio = registro["ratio"];
       _tamanyocosecha = registro["tamanyo_cosecha"];
       _frecuenciaCosecha = registro["frecuencia_cosecha"];
 
-      Granja _granja = Granja.fromDB(_id, _nombre, _posicion, capital, disp, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio, _tamanyocosecha, _frecuenciaCosecha);
+      Granja _granja = Granja.fromDB(_id, _nombre, _posicion, capital, disp, 
+        _filonCantidad, _filonCantidadMaxima, 
+        _tamanyocosecha, _frecuenciaCosecha,  _ratio,
+        _cantidadActual, _topeAlmacen);
       _lista.add(_granja);
     });
 
@@ -603,13 +607,13 @@ class DBProvider {
   }
 
   /** Serreria */
-  Future<int> insertaSerreria(int i, String s, Capital capital, Punto posicion, int cantidad_filon, int cantidad_tope_almacen, int cantidad_actual_almacen, int ratio,
+  Future<int> insertaSerreria(int i, String s, Capital capital, Punto posicion, int cantidad_tope_filon, int cantidad_tope_almacen, int ratio,
       int tamanyo_cosecha, int frecuencia_cosecha, Jugador propietario) async {
     var dbClient = await database;
     var res = await dbClient.rawInsert("""
-      INSERT Into Serreria (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
+      INSERT Into Serreria (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
       VALUES (
-        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_filon, $cantidad_tope_almacen, $cantidad_actual_almacen,
+        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_tope_filon, $cantidad_tope_filon, $cantidad_tope_almacen, 0,
         $ratio, $tamanyo_cosecha, $frecuencia_cosecha, ${propietario.getID()}
       )
     """);
@@ -617,13 +621,13 @@ class DBProvider {
   }
 
   Future<List<Serreria>> getSerreria(Capital capital, Dispatcher disp) async {
-    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
+    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _filonCantidadMaxima; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
 
     List<Serreria> _lista = List<Serreria>();
 
     var dbClient = await database;
     var table = await dbClient.rawQuery("""
-        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
+        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
         FROM Serreria WHERE Ciudad=${capital.getID()}
     """);
     table.forEach( (registro) {
@@ -631,13 +635,17 @@ class DBProvider {
       _nombre = registro["nombre"];
       _posicion = Punto(registro["x"], registro["y"], registro["z"] );
       _filonCantidad = registro["cantidad_filon"];
+      _filonCantidadMaxima = registro["cantidad_tope_filon"];
       _topeAlmacen = registro["cantidad_tope_almacen"];
       _cantidadActual = registro["cantidad_actual_almacen"];
       _ratio = registro["ratio"];
       _tamanyocosecha = registro["tamanyo_cosecha"];
       _frecuenciaCosecha = registro["frecuencia_cosecha"];
 
-      Serreria _serreria = Serreria.fromDB(_id, _nombre, _posicion, capital, disp, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio, _tamanyocosecha, _frecuenciaCosecha);
+      Serreria _serreria = Serreria.fromDB(_id, _nombre, _posicion, capital, disp, 
+        _filonCantidad, _filonCantidadMaxima, 
+        _tamanyocosecha, _frecuenciaCosecha,  _ratio,
+        _cantidadActual, _topeAlmacen);
       _lista.add(_serreria);
     });
 
@@ -645,13 +653,13 @@ class DBProvider {
   }
 
   /** Cantera */
-  Future<int> insertaCantera(int i, String s, Capital capital, Punto posicion, int cantidad_filon, int cantidad_tope_almacen, int cantidad_actual_almacen, int ratio,
+  Future<int> insertaCantera(int i, String s, Capital capital, Punto posicion, int cantidad_tope_filon, int cantidad_tope_almacen, int ratio,
       int tamanyo_cosecha, int frecuencia_cosecha, Jugador propietario) async {
     var dbClient = await database;
     var res = await dbClient.rawInsert("""
-      INSERT Into Cantera (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
+      INSERT Into Cantera (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
       VALUES (
-        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_filon, $cantidad_tope_almacen, $cantidad_actual_almacen,
+        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_tope_filon, $cantidad_tope_filon, $cantidad_tope_almacen, 0,
         $ratio, $tamanyo_cosecha, $frecuencia_cosecha, ${propietario.getID()}
       )
     """);
@@ -659,13 +667,13 @@ class DBProvider {
   }
 
   Future<List<Cantera>> getCantera(Capital capital, Dispatcher disp) async {
-    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
+    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _filonCantidadMaxima; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
 
     List<Cantera> _lista = List<Cantera>();
 
     var dbClient = await database;
     var table = await dbClient.rawQuery("""
-        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
+        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
         FROM Cantera WHERE Ciudad=${capital.getID()}
     """);
     table.forEach( (registro) {
@@ -673,13 +681,17 @@ class DBProvider {
       _nombre = registro["nombre"];
       _posicion = Punto(registro["x"], registro["y"], registro["z"] );
       _filonCantidad = registro["cantidad_filon"];
+      _filonCantidadMaxima = registro["cantidad_tope_filon"];
       _topeAlmacen = registro["cantidad_tope_almacen"];
       _cantidadActual = registro["cantidad_actual_almacen"];
       _ratio = registro["ratio"];
       _tamanyocosecha = registro["tamanyo_cosecha"];
       _frecuenciaCosecha = registro["frecuencia_cosecha"];
 
-      Cantera _cantera = Cantera.fromDB(_id, _nombre, _posicion, capital, disp, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio, _tamanyocosecha, _frecuenciaCosecha);
+      Cantera _cantera = Cantera.fromDB(_id, _nombre, _posicion, capital, disp, 
+        _filonCantidad, _filonCantidadMaxima, 
+        _tamanyocosecha, _frecuenciaCosecha,  _ratio,
+        _cantidadActual, _topeAlmacen);
       _lista.add(_cantera);
     });
 
@@ -687,13 +699,13 @@ class DBProvider {
   }
 
   /** Mina de Hierro */
-  Future<int> insertaMinaDeHierro(int i, String s, Capital capital, Punto posicion, int cantidad_filon, int cantidad_tope_almacen, int cantidad_actual_almacen, int ratio,
+  Future<int> insertaMinaDeHierro(int i, String s, Capital capital, Punto posicion, int cantidad_tope_filon, int cantidad_tope_almacen, int ratio,
       int tamanyo_cosecha, int frecuencia_cosecha, Jugador propietario) async {
     var dbClient = await database;
     var res = await dbClient.rawInsert("""
-      INSERT Into Mina_Hierro (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
+      INSERT Into Mina_Hierro (id, ciudad, nombre, x, y, z, cantidad_filon, cantidad_tope_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario) 
       VALUES (
-        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_filon, $cantidad_tope_almacen, $cantidad_actual_almacen,
+        $i, ${capital.getID()}, '$s', ${posicion.getX()}, ${posicion.getY()}, ${posicion.getZ()}, $cantidad_tope_filon, $cantidad_tope_filon, $cantidad_tope_almacen, 0,
         $ratio, $tamanyo_cosecha, $frecuencia_cosecha, ${propietario.getID()}
       )
     """);
@@ -701,13 +713,13 @@ class DBProvider {
   }
 
   Future<List<MinaDeHierro>> getMinaDeHierro(Capital capital, Dispatcher disp) async {
-    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
+    int _id; String _nombre; Punto _posicion; int _filonCantidad; int _filonCantidadMaxima; int _topeAlmacen; int _cantidadActual; int _ratio; int _tamanyocosecha; int _frecuenciaCosecha;
 
     List<MinaDeHierro> _lista = List<MinaDeHierro>();
 
     var dbClient = await database;
     var table = await dbClient.rawQuery("""
-        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
+        SELECT id, nombre, x, y, z, cantidad_filon, cantidad_tope_filon, cantidad_tope_almacen, cantidad_actual_almacen, ratio, tamanyo_cosecha, frecuencia_cosecha, propietario 
         FROM Mina_Hierro WHERE Ciudad=${capital.getID()}
     """);
     table.forEach( (registro) {
@@ -715,6 +727,7 @@ class DBProvider {
       _nombre = registro["nombre"];
       _posicion = Punto(registro["x"], registro["y"], registro["z"] );
       _filonCantidad = registro["cantidad_filon"];
+      _filonCantidadMaxima = registro["cantidad_tope_filon"];
       _topeAlmacen = registro["cantidad_tope_almacen"];
       _cantidadActual = registro["cantidad_actual_almacen"];
       _ratio = registro["ratio"];
@@ -724,8 +737,10 @@ class DBProvider {
       int costeConstruccion = 250;
       int tiempoContruccion = 5;
 
-      MinaDeHierro _mina = MinaDeHierro.fromDB(_id, _nombre, _posicion, capital, disp, costeConstruccion, tiempoContruccion, _filonCantidad, _topeAlmacen, _cantidadActual, _ratio,
-          _tamanyocosecha, _frecuenciaCosecha);
+      MinaDeHierro _mina = MinaDeHierro.fromDB(_id, _nombre, _posicion, capital, disp, costeConstruccion, tiempoContruccion,
+        _filonCantidad, _filonCantidadMaxima, 
+        _tamanyocosecha, _frecuenciaCosecha,  _ratio,
+        _cantidadActual, _topeAlmacen);
       _lista.add(_mina);
     });
 

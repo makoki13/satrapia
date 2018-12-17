@@ -10,11 +10,11 @@ import './Transporte.clase.dart';
 import './Punto.clase.dart';
 
 class Serreria extends Edificio {
-  static num costeConstruccion = Parametros.Serreria_Construccion_Coste;
-  static num tiempoContruccion = Parametros.Serreria_Construccion_Tiempo;
-  num cantidadInicial = Parametros.Serreria_Productor_CantidadInicial;
-  num cantidadMaxima = Parametros.Serreria_Productor_CantidadMaxima;
-  num maximoItems = Parametros.Serreria_Num_Total;
+  //static num costeConstruccion = Parametros.Serreria_Construccion_Coste;
+  //static num tiempoContruccion = Parametros.Serreria_Construccion_Tiempo;
+  //num cantidadInicial = Parametros.Serreria_Productor_CantidadInicial;
+  //num cantidadMaxima = Parametros.Serreria_Productor_CantidadMaxima;
+  //num maximoItems = Parametros.Serreria_Num_Total;
 
   Extractor _lenyadores;
   Productor _filon;
@@ -26,30 +26,35 @@ class Serreria extends Edificio {
   Capital _capital;
   Dispatcher _disp;
 
-  Serreria (this.id, this._nombre, this._posicion, this._capital, this._disp) : super (id, _nombre, TipoEdificio.SERRERIA, _posicion, Serreria.costeConstruccion, Serreria.tiempoContruccion) {
+  Serreria (this.id, this._nombre, this._posicion, this._capital, this._disp, cantidadMaxima) : super (id, _nombre, TipoEdificio.SERRERIA, _posicion, 
+    Parametros.Serreria_Construccion_Coste, Parametros.Serreria_Construccion_Tiempo) {
     this._capital.addSerreria(this);
-    this._filon = new Productor ( null, MADERA, this.cantidadInicial, this.cantidadMaxima, Parametros.Serreria_Productor_Ratio);
-    this._almacen = new Almacen ( 67, 'Silo de madera', MADERA, this._posicion, Parametros.Serreria_Almacen_Capacidad);    
-    this._lenyadores = new Extractor (this._filon, this._almacen, Parametros.Serreria_Cosecha_Tamanyo);
 
+    this._filon = new Productor ( null, MADERA, cantidadMaxima, cantidadMaxima);
+    
+    this._almacen = new Almacen ( 67, 'Silo de madera', MADERA, this._posicion, Parametros.Serreria_Almacen_Capacidad);    
+
+    int tamanyoCosecha = (Parametros.Serreria_Cosecha_Tamanyo * (Parametros.Serreria_Productor_Ratio / 100)).toInt();
+    this._lenyadores = new Extractor (this._filon, this._almacen, tamanyoCosecha);
     this._disp.addTareaRepetitiva(extrae, Parametros.Serreria_Cosecha_Frecuencia);
 
     this.setStatus ('Sin envios actuales');
   }
 
-  Serreria.fromDB (this.id, this._nombre, this._posicion, this._capital, this._disp, int filonCantidad, int topeAlmacen, int cantidadActual, int ratio,
-      int tamanyoCosecha, int frecuenciaCosecha)
-      :  super (id, _nombre, TipoEdificio.SERRERIA, _posicion, Serreria.costeConstruccion, Serreria.tiempoContruccion) {
+  Serreria.fromDB (this.id, this._nombre, this._posicion, this._capital, this._disp, 
+      int stockProductor, int productorCantidadMaxima,       
+      int tamanyoCosecha, int frecuenciaCosecha, int ratio,
+      int stockAlmacen, int topeAlmacen)
+      :  super (id, _nombre, TipoEdificio.SERRERIA, _posicion, Parametros.Serreria_Construccion_Coste, Parametros.Serreria_Construccion_Tiempo) {
     this._capital.addSerreria(this);
-
-    this._filon = new Productor ( null, MADERA, cantidadActual, filonCantidad, ratio);
+    
+    this._filon = new Productor ( null, MADERA, stockProductor, productorCantidadMaxima);
+    
     this._almacen = new Almacen ( 67, 'Silo de madera', MADERA, this._posicion, topeAlmacen);
-
-    _almacen.setCantidad(cantidadActual);
-
-    //print("Serria from db tamaño cosecha: $tamanyoCosecha");
+    _almacen.setCantidad(stockAlmacen);
+    
+    tamanyoCosecha = (tamanyoCosecha * (ratio / 100)).toInt();
     this._lenyadores = new Extractor (this._filon, this._almacen, tamanyoCosecha);
-
     this._disp.addTareaRepetitiva(extrae, frecuenciaCosecha);
 
     this.setStatus ('Sin envios actuales');
@@ -87,5 +92,5 @@ class Serreria extends Edificio {
 
   String getStatus() { return this.status; }
 
-  bool estaActiva() { return (this._filon.getStock() > Parametros.Filon_Vacio); }
+  bool estaActiva() { return this._filon.estaAgotado(); }
 }
