@@ -1,3 +1,5 @@
+import 'package:satrapia/api/api.dart';
+
 import './Extractor.clase.dart';
 import './Productor.clase.dart';
 import './Almacen.clase.dart';
@@ -66,18 +68,21 @@ class Mina extends Edificio {
 
   String toString() { return this._nombre;}
 
-  extrae() {
-    num cantidad = this.mineros.getCantidad();
-
-    this.almacen.addCantidad (cantidad);
-
-    /* Si el almacen alcanza el tope enviar un transporte de recursos a palacio */
-    //print("$cantidad __ Cantidad: ${this.almacen.getCantidad()} vs ${this.almacen.getMaxCantidad()}");
+  void extrae() {
+    //print("Mina de hierro ${this.getID()}: cantidad almacen: ${this.almacen.getCantidad()} --- maxima cantidad almacen: ${this.almacen.getMaxCantidad()}");
     if (this.almacen.getCantidad() >= this.almacen.getMaxCantidad()) {
       if (this.hayEnvioEnMarcha == false) {
+        //print("Mina de hierro ${this.getID()}: relaizando envio");
         this.hayEnvioEnMarcha = true;
         this.enviaRecursosHaciaPalacio(almacenDestino);
       }
+    }
+    else {
+      num cantidad = this.mineros.getCantidad();
+      //print("${this.getID()}:: Mineroas recogieron ${cantidad}");
+      this.almacen.addCantidad(cantidad);
+
+      API.setStockFilonMinaDeHierro(this);
     }
   }
 
@@ -98,6 +103,9 @@ class Mina extends Edificio {
   String getStatus() { return this.status; }
   
   bool estaActiva() { return this.filon.estaAgotado(); }
+
+  Productor getFilon() { return this.filon; }
+  Capital getCapital() { return this._capital; }
 }
 
 

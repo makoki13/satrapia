@@ -1,3 +1,5 @@
+import 'package:satrapia/api/api.dart';
+
 import './Edificio.clase.dart';
 import './Parametros.clase.dart';
 import './Capital.clase.dart';
@@ -69,15 +71,17 @@ class Cantera extends Edificio {
   String toString() { return this._nombre;}
 
   extrae() {
-    int cantidad = this._canteros.getCantidad();
-    this._almacen.addCantidad (cantidad);
-
-    /* Si el almacen alcanza el tope enviar un transporte de piedra a palacio */
-    if (this._almacen.getCantidad() >= this._almacen.getMaxCantidad()) {      
-      if (this.hayEnvioEnMarcha == false) {        
+    if (this._almacen.getCantidad() >= this._almacen.getMaxCantidad()) {
+      if (this.hayEnvioEnMarcha == false) {
         this.hayEnvioEnMarcha = true;
         this.enviaPiedraHaciaCiudad();
       }
+    }
+    else {
+      int cantidad = this._canteros.getCantidad();
+      this._almacen.addCantidad(cantidad);
+
+      API.setStockFilonCantera(this);
     }
   }
 
@@ -97,4 +101,7 @@ class Cantera extends Edificio {
   setStatus( String mensaje ) { super.setStatus(mensaje); }
 
   bool estaActiva() { return this._filon.estaAgotado(); }
+
+  Productor getFilon() { return this._filon; }
+  Capital getCapital() { return this._capital; }
 }

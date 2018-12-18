@@ -39,7 +39,7 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "satrapia_008.db");
+    String path = join(documentsDirectory.path, "satrapia_001.db");
     return await openDatabase(path, version: 1,
         onOpen: (db) {},
         onCreate: (Database db, int version) async {
@@ -698,6 +698,15 @@ class DBProvider {
     return _lista;
   }
 
+  Future<int> setStockFilonCantera(Cantera cantera) async {
+    int cantidad = cantera.getFilon().getStock();
+    int id = cantera.getID();
+    int ciudad = cantera.getCapital().getID();
+    var dbClient = await database;
+    String sql="UPDATE Cantera SET cantidad_filon = $cantidad WHERE ID=$id AND Ciudad=$ciudad";
+    return dbClient.rawUpdate(sql);
+  }
+
   /** Mina de Hierro */
   Future<int> insertaMinaDeHierro(int i, String s, Capital capital, Punto posicion, int cantidad_tope_filon, int cantidad_tope_almacen, int ratio,
       int tamanyo_cosecha, int frecuencia_cosecha, Jugador propietario) async {
@@ -747,6 +756,18 @@ class DBProvider {
     return _lista;
   }
 
+  Future<int> setStockFilonHierro(MinaDeHierro mina) async {
+    int cantidad = mina.getFilon().getStock();
+    int id = mina.getID();
+    int ciudad = mina.getCapital().getID();
+    var dbClient = await database;
+    String sql="UPDATE Mina_Hierro SET cantidad_filon = $cantidad WHERE ID=$id AND Ciudad=$ciudad";
+    //print("ID: $id $sql");
+    return dbClient.rawUpdate(sql);
+  }
+
+
+
   Future<void> borraCentrosDeRecursos() async {
     var dbClient = await database;
     dbClient.rawDelete("Delete from Granja");
@@ -754,5 +775,4 @@ class DBProvider {
     dbClient.rawDelete("Delete from Cantera");
     dbClient.rawDelete("Delete from Mina_Hierro");
   }
-
 }

@@ -180,6 +180,11 @@ class ApiModelo {
   /** TODO */
   static void deleteCantera() {}
 
+  static void setStockFilonCantera(Cantera cantera) {
+    DBProvider.db.setStockFilonCantera(cantera);
+  }
+
+
   static void addMinaDeHierro(int id, String nombre, Capital capital, Punto posicion, int cantidadFilon, int cantidadTopeAlmacen, int ratio,
       int tamanyoCosecha, int frecuenciaCosecha, Jugador propietario) {
     DBProvider.db.insertaMinaDeHierro(id,nombre,capital,posicion,cantidadFilon,cantidadTopeAlmacen,ratio,tamanyoCosecha,frecuenciaCosecha,propietario);
@@ -187,5 +192,9 @@ class ApiModelo {
 
   /** TODO */
   static void deleteMinaDeHierro() {}
+
+  static void setStockFilonMinaDeHierro(MinaDeHierro mina) {
+    DBProvider.db.setStockFilonHierro(mina);
+  }
 
 }

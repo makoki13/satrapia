@@ -18,6 +18,9 @@ class Productor {
     } else {
       this._stock -= cantidad;
     }
+
+    //if (_recurso.getNombre() == "HIERRO") print("Stock ${_recurso.getNombre()}  : ${this._stock}");
+
     return cantidad;
   }
 

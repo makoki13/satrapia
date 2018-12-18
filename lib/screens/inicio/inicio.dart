@@ -56,6 +56,7 @@ class InicioState extends State<Inicio> {
     //print("Boton nuevaPartida");
     //Navigator.of(_ctx).pushReplacementNamed("/partida");
     //Navigator.pushNamed(context, "/partida");
+    _isButtonContinuarPartidaDisabled = false;
     Navigator.push(
         context,
         MaterialPageRoute(

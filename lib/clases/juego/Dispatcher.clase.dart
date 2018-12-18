@@ -11,7 +11,9 @@ class Tarea {
   DateTime getVencimiento() {return this._vencimiento; }
 
   setVencimiento () {
-    this._vencimiento.add(new Duration(seconds: this._delta));
+    if (this._delta == 60) print("Vencimiento antes de ${_vencimiento}");
+    this._vencimiento = this._vencimiento.add(new Duration(seconds: this._delta));
+    if (this._delta == 60) print("Tras añadir ${this._delta} segundos: ${_vencimiento}");
   }
 
   String getNombreFuncion() { return this._funcion.toString(); }
@@ -51,8 +53,11 @@ class Dispatcher {
     if (numTareas > 0) {      
       lista.forEach((tarea) {
         if (tarea._eliminada == false) {
+          //print("${tarea.getNombreFuncion()}");
+          if (tarea.getNombreFuncion()=="Closure: () => dynamic from Function 'realizaCenso':.") print("$horaActual --> Tarea: ${tarea.getNombreFuncion()} in ${tarea.getVencimiento()}");
           if (tarea.getVencimiento().isBefore(horaActual)) {
             tarea.setVencimiento();
+            if (tarea.getNombreFuncion()=="Closure: () => dynamic from Function 'realizaCenso':.") print("$horaActual --> Tarea: ${tarea.getNombreFuncion()} after ${tarea.getVencimiento()}");
             num rt = tarea.execFuncion();
             if (rt == -1) {
               //print("Eliminamos tarea ${tarea.getNombreFuncion()}");

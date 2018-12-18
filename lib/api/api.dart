@@ -124,8 +124,8 @@ class API {
     _modelo = modelo;
 
     _generaRegistros(jugador).then( (nada) { 
-      Estructura._palacio.iniciaCenso();
-      Estructura._palacio.iniciaRecaudacion();
+      //Estructura._palacio.iniciaCenso();
+      //Estructura._palacio.iniciaRecaudacion();
 
       _pruebas();
       });    
@@ -135,8 +135,10 @@ class API {
     _modelo = modelo;
 
     _cargaRegistros(jugador).then( (nada) {
-      Estructura._palacio.iniciaCenso();
-      Estructura._palacio.iniciaRecaudacion();
+      //Estructura._palacio.iniciaCenso();
+      //Estructura._palacio.iniciaRecaudacion();
+
+      print("Num minas de hierro: ${Estructura.minasDeHierro.length}");
     });
   }
 
@@ -320,6 +322,9 @@ class API {
   static void invadeCantera(int id) {} //Se cambia el jugador propietario
   static int  numCanteras() { return Estructura.canteras.length;}
   static List<Cantera> listaCanteras() { return Estructura.canteras;}
+  static void setStockFilonCantera(Cantera cantera) {
+    ApiModelo.setStockFilonCantera(cantera);
+  }
 
   /* MINAS DE HIERRO */
   static int creaMinaDeHierro(Punto posicion) {
@@ -354,6 +359,9 @@ class API {
   static void invadeMinaDeHierro(int id) {} //Se cambia el jugador propietario
   static int  numMinasDeHierro() { return Estructura.canteras.length;}
   static List<MinaDeHierro> listaMinasDeHierro() { return Estructura.minasDeHierro;}
+  static void setStockFilonMinaDeHierro(MinaDeHierro mina) {
+    ApiModelo.setStockFilonMinaDeHierro(mina);
+  }
 
   /* INVESTIGACIONES */
   static List<TipoInvestigacion> getListaInvestigaciones() {

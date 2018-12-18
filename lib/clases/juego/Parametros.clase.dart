@@ -59,7 +59,7 @@ class Parametros {
   static int oroInicial = 5000;
   static int Poblacion_Cantidad_Inicial = 100;
   static int Poblacion_Cantidad_Maxima = 10000000;
-  static int Poblacion_Productor_Ratio = 1;
+  static int Poblacion_Productor_Ratio = 100;
 
   static num IDpartida = null;
 

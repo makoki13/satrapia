@@ -41,24 +41,25 @@ class Palacio extends Edificio {
     int tamanyoCosecha = (Parametros.Poblacion_Cantidad_Inicial * (Parametros.Poblacion_Productor_Ratio / 100)).toInt();
     this._recaudador = new Extractor (this._impuestos, this._oro, tamanyoCosecha);
 
-    this._disp.addTareaRepetitiva(realizaCenso, 1);
+    this._disp.addTareaRepetitiva(realizaCenso, 10);
   }
 
   String toString() { return this._nombre;}
-
+/*
   recaudaImpuestos ( ) {
     num cantidad = this._recaudador.getCantidad();
     this._oro.addCantidad (cantidad);
     API.setOroActual();
   }
-
+*/
   realizaCenso ( ) {
     num cantidad = this._crecimientoDemografico.getCantidad();
     this._poblacion.addCantidad (cantidad);
     API.setPoblacionActual();
 
     /* Poner aqui la recaudación de impuestos */
-    int tamanyoCosecha = (cantidad * (Parametros.Poblacion_Productor_Ratio / 100)).toInt();
+    int tamanyoCosecha = (this._poblacion.getCantidad() * (Parametros.Poblacion_Productor_Ratio / 100)).toInt();
+    print("$tamanyoCosecha = (${this._poblacion.getCantidad()} * (${Parametros.Poblacion_Productor_Ratio} / 100))");
     this._oro.addCantidad (tamanyoCosecha);
     API.setOroActual();
   }
@@ -90,6 +91,7 @@ class Palacio extends Edificio {
     this._poblacion.addCantidad(cantidad);
   }
 
+  /*
   iniciaRecaudacion() {
     this._disp.addTareaRepetitiva(recaudaImpuestos, 1);
   }
@@ -97,4 +99,5 @@ class Palacio extends Edificio {
   iniciaCenso() {
     this._disp.addTareaRepetitiva(realizaCenso, 1);
   }
+  */
 }
